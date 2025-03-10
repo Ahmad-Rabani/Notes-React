@@ -9,7 +9,7 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid #3a3d42;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin: 2rem auto; /* Centers the card horizontally */
+  margin: 2rem auto;
   transition: all 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
   transform-origin: center bottom;
 
@@ -26,12 +26,12 @@
   }
 
   @media (max-width: 768px) {
-      width: 85%; /* More width on smaller screens */
+      width: 85%;
       padding: 1.2rem;
   }
 
   @media (max-width: 480px) {
-      width: 95%;
+      width: 85%;
       height: auto;
       min-height: 250px;
   }
