@@ -1,47 +1,30 @@
 import { useEffect, useState } from "react";
-import { doc, collection, getDocs, deleteDoc, query, where } from "firebase/firestore";
-import { db, auth } from "../../firebase";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../firebase";
+import { fetchNotes, deleteNote } from "./_redux/MainSlice";
 import Create from "../card/CreateCard";
 import ShowCard from "../Show Card/Card";
 import Loader from "../loader/Loading";
 import "./mainstyle.scss";
 
 const Main = () => {
-  const [data, setData] = useState([]);
-  const [currentId, setId] = useState();
-  const [isCreateModal, setModel] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [currentUserUid, setCurrentUserUid] = useState(null);
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const isStared = searchParams.get("stared") === "true";
 
-  // Fetch Data from Firestore
-  async function handleCardData(uid) {
-    if (!uid) return;
-
-    const q = isStared
-      ? query(collection(db, "newData"), where("userId", "==", uid), where("stared", "==", true))
-      : query(collection(db, "newData"), where("userId", "==", uid));
-
-    const querySnapshot = await getDocs(q);
-    const storedData = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-
-    setData(storedData);
-    setIsLoading(false);
-  }
+  const { data, status } = useSelector((state) => state.main);
+  const [currentId, setId] = useState();
+  const [isCreateModal, setModel] = useState(false);
+  const [currentUserUid, setCurrentUserUid] = useState(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setCurrentUserUid(user.uid);
-        handleCardData(user.uid);
+        dispatch(fetchNotes({ userUid: user.uid, isStared }));
       } else {
         navigate("/signup", { replace: true });
       }
@@ -52,13 +35,12 @@ const Main = () => {
 
   useEffect(() => {
     if (currentUserUid) {
-      handleCardData(currentUserUid);
+      dispatch(fetchNotes({ userUid: currentUserUid, isStared }));
     }
   }, [isStared]);
 
-  const deleteNote = async (id) => {
-    await deleteDoc(doc(db, "newData", id));
-    handleCardData(currentUserUid);
+  const handleDelete = async (id) => {
+    dispatch(deleteNote({ noteId: id, userUid: currentUserUid }));
   };
 
   const updateData = (id) => {
@@ -82,7 +64,6 @@ const Main = () => {
           </button>
           <button
             className={`button secondry ${isStared ? "is-clicked" : ""}`}
-            name="allStaredButton"
             onClick={toggleStaredView}
             type="button"
           >
@@ -97,25 +78,22 @@ const Main = () => {
 
       {isCreateModal && (
         <Create
-          handleCardData={handleCardData}
           updatingData={data.find((item) => item.id === currentId)}
-          passData={data}
           showModel={setModel}
           userUid={currentUserUid}
         />
       )}
 
       <div className="cards-div">
-        {isLoading ? (
+        {status === "loading" ? (
           <Loader />
         ) : (
           data.map((item) => (
             <ShowCard
               key={item.id}
               data={item}
-              handleClose={deleteNote}
+              handleClose={handleDelete}
               handleUpdate={updateData}
-              handleCardData={handleCardData}
               userUid={currentUserUid}
             />
           ))
@@ -123,7 +101,7 @@ const Main = () => {
       </div>
 
       <div className="add-notes">
-        <h2>Add Notes </h2>
+        <h2>Add Notes</h2>
         <span onClick={() => setModel(true)}>
           <h1>+</h1>
         </span>

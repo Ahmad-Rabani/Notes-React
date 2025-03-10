@@ -1,3 +1,29 @@
+/* 🎨 Preserved Notes Styling with Enhancements */
+.notes {
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+  margin-left: 40px;
+}
+
+.notes h2 {
+  color: black;
+  font-size: 1.5rem;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.notes h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(45deg, #6c5ce7, #a66efa);
+}
+
+/* 📌 Head Section */
 .head-div {
   display: flex;
   flex-direction: row;
@@ -10,62 +36,76 @@
   align-items: center;
 }
 
-.notes {
-  display: flex;
-  flex-direction: row;
-  margin: 0;
-  margin-left: 40px;
-
-  h2 {
-    color: black;
-    font-size: 1.5rem;
-  }
-}
-
 .all-and-stared {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
 
+/* 🎨 Updated Button Styles */
 .button {
   height: 40px;
-  border-radius: 3px;
-  border: 1px solid #ccc;
+  border-radius: 5px;
+  border: none;
   cursor: pointer;
-  width: 70px;
-  background-color: white;
-  color: black;
-  margin-left: 5px;
+  width: 80px;
   font-size: 1rem;
-
-  &.secondry {
-    width: 110px;
-  }
-
-  &.outline {
-    border: none;
-    margin-left: 20px;
-
-    &:hover {
-      transition: ease-in-out 0.5s;
-      color: red;
-      text-decoration: underline;
-      border: 2px solid red;
-    }
-  }
-
-  &.is-clicked {
-    background-color: black;
-    color: white;
-  }
-
-  &:hover {
-    transition: ease-in-out 0.5s;
-    border: 2px solid #ccc;
-  }
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(45deg, #ff5733, #ff8c42); /* 🔥 Warm Orange */
+  box-shadow: 0 4px 10px rgba(255, 87, 51, 0.3);
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px; /* 🆕 Added spacing between buttons */
 }
 
+.button:hover {
+  background: linear-gradient(45deg, #ff8c42, #ff5733);
+  box-shadow: 0 6px 14px rgba(255, 87, 51, 0.5);
+  transform: scale(1.05);
+}
+
+/* 🟢 Green Secondary Button */
+.button.secondry {
+  width: 120px;
+  background: linear-gradient(45deg, #28a745, #34d058);
+  box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+}
+
+.button.secondry:hover {
+  background: linear-gradient(45deg, #34d058, #28a745);
+  box-shadow: 0 6px 14px rgba(40, 167, 69, 0.5);
+}
+
+/* 🔵 Blue Outline Button */
+.button.outline {
+  border: 2px solid #007bff;
+  background: transparent;
+  color: #007bff;
+  transition: all 0.3s ease-in-out;
+}
+
+.button.outline:hover {
+  background: #007bff;
+  color: white;
+  box-shadow: 0 6px 14px rgba(0, 123, 255, 0.5);
+}
+
+/* ⚫ Clicked (Dark) Button */
+.button.is-clicked {
+  background: linear-gradient(45deg, #343a40, #212529);
+  color: white;
+  box-shadow: 0 4px 10px rgba(52, 58, 64, 0.3);
+}
+
+.button.is-clicked:hover {
+  background: linear-gradient(45deg, #212529, #343a40);
+  box-shadow: 0 6px 14px rgba(52, 58, 64, 0.5);
+}
+
+/* 🚀 Improved Add Notes Styles */
 .add-notes {
   display: flex;
   flex-direction: row;
@@ -73,29 +113,72 @@
   right: 43px;
   bottom: 10px;
   align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease-in-out;
+}
 
-  span {
-    cursor: pointer;
-    width: 30px;
-    height: 33px;
-    border-radius: 50%;
-    background-color: black;
-    position: relative;
+.add-notes span {
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #6c5ce7, #a66efa);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);
+  transition: all 0.3s ease-in-out;
+}
 
-    h1 {
-      width: 30px;
-      height: 30px;
-      margin: 0;
-      color: white;
-      position: absolute;
-      bottom: 12px;
-      left: 4px;
-    }
+.add-notes span:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 14px rgba(108, 92, 231, 0.5);
+}
+
+.add-notes span h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: white;
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
+}
+
+.add-notes span:hover h1 {
+  transform: rotate(360deg);
+}
+
+/* 📌 Cards Grid */
+.cards-div {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: 10px;
+  width: 99%;
+  min-height: 60vh;
+  justify-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+@media (max-width: 1024px) {
+  .cards-div {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 8px;
   }
 }
 
-/* Responsive Styles */
 @media (max-width: 768px) {
+  .cards-div {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 6px;
+    padding: 5px;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
   .notes h2 {
     font-size: 1.2rem;
   }
@@ -116,6 +199,16 @@
 }
 
 @media (max-width: 480px) {
+  .cards-div {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 5px;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
   .notes h2 {
     font-size: 1rem;
   }
@@ -134,70 +227,3 @@
     bottom: 10px;
   }
 }
-
-  
-  // .add-notes {
-  //   display: flex;
-  //   flex-direction: row;
-  //   position: fixed;
-  //   right: 43px;
-  //   bottom: 10px;
-  //   align-items: center;
-  
-  //   span {
-  //     cursor: pointer;
-  //     width: 30px;
-  //     height: 33px;
-  //     border-radius: 50%;
-  //     background-color: black;
-  //     position: relative;
-  
-  //     h1 {
-  //       width: 30px;
-  //       height: 30px;
-  //       margin: 0;
-  //       color: white;
-  //       position: absolute;
-  //       bottom: 12px;
-  //       left: 4px;
-  //     }
-  //   }
-  // }
-  
-  .cards-div {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-    gap: 10px;
-    width: 99%;
-    min-height: 60vh;
-    justify-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    padding: 10px;
-  
-    @media (max-width: 1024px) {
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 8px;
-    }
-  
-    @media (max-width: 768px) {
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 6px;
-      padding: 5px;
-      width: 90%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-  
-    @media (max-width: 480px) {
-      grid-template-columns: 1fr;
-      gap: 10px;
-      padding: 5px;
-      width: 90%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-  }
-  

@@ -1,16 +1,17 @@
 import React, { useRef, useState } from "react";
-import { doc, setDoc, addDoc, collection } from "firebase/firestore";
-import { db } from "../../firebase";
-import "./cardStylled.scss"
+import { useDispatch, useSelector } from "react-redux";
+import { saveNote } from "./_redux/CardSlice";
+import "./cardStylled.scss";
 
-const Model = ({ updatingData, showModel, handleCardData, userUid }) => {
+const Model = ({ updatingData, showModel, userUid }) => {
   const refName = useRef();
   const refDescription = useRef();
   const refDate = useRef();
-  const saveButton = useRef();
-  const refWord = useRef();
-  const [words, setWords] = useState();
   const refouterDiv = useRef();
+  const dispatch = useDispatch();
+
+  const [words, setWords] = useState();
+  const { status } = useSelector((state) => state.model);
 
   function backFnc() {
     showModel(false);
@@ -19,49 +20,22 @@ const Model = ({ updatingData, showModel, handleCardData, userUid }) => {
   async function handleSubmit(e) {
     e.preventDefault();
     const { title, desc, date } = e.target;
-
-    if (updatingData) {
+  
+    const noteData = {
+      name: title.value,
+      description: desc.value,
+      date: date.value,
+    };
+  
+    dispatch(saveNote({ updatingData, userUid, noteData })).then(() => {
       showModel(false);
-      const newDocRef = doc(db, "newData", updatingData.id);
-      await setDoc(newDocRef, {
-        id: updatingData.id,
-        userId: userUid,
-        name: title.value,
-        description: desc.value,
-        date: date.value,
-        stared: false,
-      });
-    } else {
-      showModel(false);
-      const usersCollectionRef = collection(db, "newData");
-      const { id } = await addDoc(usersCollectionRef, {});
-      const newDocRef = doc(usersCollectionRef, id);
-      await setDoc(newDocRef, {
-        id: id,
-        userId: userUid,
-        name: title.value,
-        description: desc.value,
-        date: date.value,
-        stared: false,
-      });
-    }
-
-    title.value = "";
-    desc.value = "";
-    date.value = "";
-    handleCardData(userUid);
+    });
   }
 
   function wordsEntered(e) {
-    let word = refWord.current.value;
-    let content = e.target.value;
-    content.trim();
-    let wordList = content.split(/\s/);
-    let words = wordList.filter(function (element) {
-      return element !== "";
-    });
-    word = words.length;
-    setWords(word);
+    let content = e.target.value.trim();
+    let wordList = content.split(/\s+/);
+    setWords(wordList.filter((word) => word !== "").length);
   }
 
   window.addEventListener("mouseup", function (event) {
@@ -73,7 +47,7 @@ const Model = ({ updatingData, showModel, handleCardData, userUid }) => {
   return (
     <div className="modal-overlay" ref={refouterDiv}>
       <div className="modal-content">
-        <h1>Add Note</h1>
+        <h1>{updatingData ? "Update Note" : "Add Note"}</h1>
         <form className="modal-form" onSubmit={handleSubmit}>
           <div>
             <h2>Name</h2>
@@ -100,9 +74,7 @@ const Model = ({ updatingData, showModel, handleCardData, userUid }) => {
               maxLength="300"
               required
             ></textarea>
-            <p>
-              <span ref={refWord} id="word"></span> Words {words}
-            </p>
+            <p>Words: {words}</p>
           </div>
           <br />
 
@@ -123,8 +95,8 @@ const Model = ({ updatingData, showModel, handleCardData, userUid }) => {
             <button className="modal-button primary" type="button" onClick={backFnc}>
               Back
             </button>
-            <button ref={saveButton} className="modal-button secondry">
-              Save
+            <button className="modal-button secondary" disabled={status === "loading"}>
+              {status === "loading" ? "Saving..." : "Save"}
             </button>
           </div>
         </form>
