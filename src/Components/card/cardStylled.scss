@@ -1,109 +1,164 @@
 .modal-overlay {
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: #fff;
-    z-index: 1;
-    top: 0;
-  }
-  
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  z-index: 10;
+  top: 0;
+  left: 0;
+}
+
+.modal-form {
+  position: relative;
+  width: 90%;
+  max-width: 400px;
+}
+
+.modal-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-content: center;
+  align-items: center;
+  justify-items: center;
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  padding: 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
+  position: relative;
+}
+
+.modal-content h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: black;
+  font-family: Montserrat, Arial, sans-serif;
+}
+
+.modal-content h2 {
+  margin: 0;
+  padding-bottom: 5px;
+  font-size: 14px;
+  font-weight: 700;
+  color: black;
+  text-align: start;
+}
+
+.modal-content input,
+.modal-content textarea {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: Montserrat, sans-serif;
+  font-size: 13px;
+}
+
+.modal-content textarea {
+  max-width: 100%;
+  height: 130px;
+  max-height: 130px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.modal-button {
+  width: 100px;
+  padding: 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: ease-in-out 0.3s;
+  border: none;
+}
+
+.modal-button.primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.modal-button.secondary {
+  background-color: #28a745;
+  color: white;
+}
+
+.modal-button:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 768px) {
   .modal-form {
-    position: relative;
+    position: sticky;
+    top: 10px;
     width: 90%;
+    max-width: 90%;
   }
-  
+
   .modal-content {
-    display: grid;
-    grid-template-columns: 1fr;
-    justify-content: center;
-    align-items: center;
-    justify-items: center;
-  
-    width: 400px;
-    height: 570px;
-    border: none;
-    border-radius: 8px;
-    background-color: rgb(255, 255, 255);
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    position: relative;
-  
-    h1 {
-      margin: 0;
-      font-size: 30px;
-      font-weight: 700;
-      color: black;
-      font-family: montserrat, arial, verdana;
-    }
-  
-    h2 {
-      margin: 0;
-      padding: 0 0 5px 0px;
-      font-size: 14px;
-      font-weight: 700;
-      color: black;
-      background-clip: text;
-      text-align: start;
-    }
-  
-    input, textarea {
-      padding: 15px;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-      width: 100%;
-      box-sizing: border-box;
-      font-family: montserrat;
-      font-size: 13px;
-    }
-  
-    textarea {
-      max-width: 360px;
-      height: 130px;
-      max-height: 130px;
-    }
-  
-    p {
-      padding: 0 0 0px 2px;
-      color: black;
-      font-size: 12px;
-      margin: 0;
-      bottom: 125px;
-  
-      span {
-        font-size: 12px;
-      }
-    }
+    width: 85%;
+    max-width: 100%;
+    height: auto;
+    padding: 15px;
   }
-  
-  .modal-buttons {
-    display: flex;
-    flex-direction: row;
+
+  .modal-content h1 {
+    font-size: 20px;
   }
-  
-  .modal-button {
-    width: 100px;
+
+  .modal-content input,
+  .modal-content textarea {
     padding: 10px;
-    border-radius: 3px;
-    background-color: white;
-    border: 1px solid #ccc;
-    cursor: pointer;
-    margin-right: 5px;
-  
-    &.primary {
-      background-color: white;
-      color: black;
-    }
-  
-    &.secondry {
-      background-color: black;
-      color: white;
-    }
-  
-    &:hover {
-      transition: ease-in-out 0.5s;
-    }
+    font-size: 12px;
   }
-  
+
+  .modal-buttons {
+    flex-direction: column;
+  }
+
+  .modal-button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    padding: 10px;
+  }
+
+  .modal-content h1 {
+    font-size: 18px;
+  }
+
+  .modal-buttons {
+    flex-direction: column;
+  }
+
+  .modal-button {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+}
+
+@media (min-width: 769px) {
+  .modal-form {
+    max-width: 500px;
+  }
+
+  .modal-content {
+    max-width: 500px;
+    padding: 25px;
+  }
+}
