@@ -33,7 +33,7 @@ const ShowCard = ({ data, handleUpdate, userUid }) => {
       <p className="card-date">{data.date}</p>
 
       <span className="close-icon material-symbols-outlined" onClick={handleDelete}>
-      {isDelete ? <Loader /> : "close"}
+      {isDelete ? <SmLoader /> : "close"}
       </span>
 
       <span className="edit-icon material-symbols-outlined" onClick={() => handleUpdate(data.id)}>
