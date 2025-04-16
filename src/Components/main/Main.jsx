@@ -52,6 +52,11 @@ const Main = () => {
     setSearchParams(isStared ? {} : { stared: "true" });
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("userLoggedIn");
+    navigate("/login", { replace: true });
+  }
+
   return (
     <div>
       <div className="head-div">
@@ -69,7 +74,7 @@ const Main = () => {
           >
             Only Stared
           </button>
-          <button className="button outline" onClick={() => navigate("/login", { replace: true })}>
+          <button className="button outline" onClick={handleLogout}>
             Logout
           </button>
         </div>

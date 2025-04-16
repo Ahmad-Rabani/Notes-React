@@ -20,15 +20,19 @@ const Model = ({ updatingData, showModel, userUid }) => {
   async function handleSubmit(e) {
     e.preventDefault();
     const { title, desc, date } = e.target;
-  
+
     const noteData = {
       name: title.value,
       description: desc.value,
       date: date.value,
     };
-  
+
     dispatch(saveNote({ updatingData, userUid, noteData })).then(() => {
       showModel(false);
+
+      title.value = "";
+      desc.value = "";
+      date.value = "";
     });
   }
 
@@ -53,7 +57,7 @@ const Model = ({ updatingData, showModel, userUid }) => {
             <h2>Name</h2>
             <input
               ref={refName}
-              defaultValue={updatingData?.name}
+              defaultValue={updatingData?.name ?? ""}
               name="title"
               type="text"
               placeholder="Name"
@@ -65,7 +69,7 @@ const Model = ({ updatingData, showModel, userUid }) => {
           <div>
             <h2>Description</h2>
             <textarea
-              defaultValue={updatingData?.description}
+              defaultValue={updatingData?.description ?? ""}
               onChange={wordsEntered}
               ref={refDescription}
               name="desc"
@@ -81,7 +85,7 @@ const Model = ({ updatingData, showModel, userUid }) => {
           <div>
             <h2>Date</h2>
             <input
-              defaultValue={updatingData?.date}
+              defaultValue={updatingData?.date ?? ""}
               ref={refDate}
               name="date"
               type="date"
@@ -92,10 +96,17 @@ const Model = ({ updatingData, showModel, userUid }) => {
           <br />
 
           <div className="modal-buttons">
-            <button className="modal-button primary" type="button" onClick={backFnc}>
+            <button
+              className="modal-button primary"
+              type="button"
+              onClick={backFnc}
+            >
               Back
             </button>
-            <button className="modal-button secondary" disabled={status === "loading"}>
+            <button
+              className="modal-button secondary"
+              disabled={status === "loading"}
+            >
               {status === "loading" ? "Saving..." : "Save"}
             </button>
           </div>

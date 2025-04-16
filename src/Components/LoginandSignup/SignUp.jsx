@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect} from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
 
@@ -7,6 +7,14 @@ import { useNavigate } from "react-router-dom";
 
 function SignUp() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const isUserLoggedIn = localStorage.getItem("userLoggedIn");
+
+    if(isUserLoggedIn) {
+      navigate("/home", { replace: true });
+    }
+  },[])
 
   function handleSubmit(e) {
     e.preventDefault();

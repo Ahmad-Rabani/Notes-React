@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
-import "./loginstyle.scss"
+import "./loginstyle.scss";
 
 const Login = () => {
   const [gmail, setGmail] = useState("");
@@ -13,7 +13,10 @@ const Login = () => {
     const { email, password } = e.target;
 
     signInWithEmailAndPassword(auth, email.value, password.value)
-      .then(() => navigate("/home", { replace: true }))
+      .then(() => {
+        navigate("/home", { replace: true });
+        localStorage.setItem("userLoggedIn", gmail);
+      })
       .catch(() => alert("Your email or password is incorrect"));
   }
 
@@ -52,7 +55,9 @@ const Login = () => {
           />
         </div>
 
-        <button className="login-button" type="submit">Login</button>
+        <button className="login-button" type="submit">
+          Login
+        </button>
         <button className="login-button secondary" onClick={goToSignUpPage}>
           Sign Up
         </button>

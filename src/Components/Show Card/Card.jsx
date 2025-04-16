@@ -2,7 +2,6 @@ import React, { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { deleteNote, toggleStar } from "./_redux/ShowCardSlice";
 import { SmLoader } from "../loader/Loading";
-import Loader from "../loader/Loading";
 import "./cardStyle.scss";
 
 const ShowCard = ({ data, handleUpdate, userUid }) => {
