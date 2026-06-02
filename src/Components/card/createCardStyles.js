@@ -1,5 +1,4 @@
 import styled, { keyframes } from "styled-components";
-import { COLORS } from "../LoginandSignup/authPageStyles";
 
 const overlayEnter = keyframes`
   from {
@@ -29,7 +28,7 @@ export const ModalOverlay = styled.div`
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  background: rgba(58, 61, 74, 0.45);
+  background: ${({ theme }) => theme.colors.overlayBg};
   backdrop-filter: blur(4px);
   animation: ${overlayEnter} 0.3s ease both;
 `;
@@ -40,19 +39,18 @@ export const ModalContent = styled.div`
   overflow-y: auto;
   padding: 2rem;
   border-radius: 20px;
-  background: ${COLORS.white};
-  box-shadow:
-    0 24px 48px rgba(58, 61, 74, 0.18),
-    0 8px 20px rgba(173, 178, 212, 0.35);
+  background: ${({ theme }) => theme.colors.surface};
+  box-shadow: ${({ theme }) => theme.colors.cardShadow};
   animation: ${modalEnter} 0.45s cubic-bezier(0.34, 1.2, 0.64, 1) both;
   font-family: "Barlow", sans-serif;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 `;
 
 export const ModalTitle = styled.h2`
   margin: 0 0 1.5rem;
   font-size: 1.5rem;
   font-weight: 700;
-  color: ${COLORS.text};
+  color: ${({ theme }) => theme.colors.text};
   letter-spacing: -0.02em;
 `;
 
@@ -68,7 +66,7 @@ export const FieldLabel = styled.label`
   display: block;
   font-size: 0.85rem;
   font-weight: 600;
-  color: ${COLORS.text};
+  color: ${({ theme }) => theme.colors.text};
   margin-bottom: 0.4rem;
 `;
 
@@ -76,20 +74,22 @@ export const FieldInput = styled.input`
   width: 100%;
   box-sizing: border-box;
   padding: 0.75rem 0.9rem;
-  border: 2px solid ${COLORS.sage};
+  border: 2px solid ${({ theme }) => theme.colors.sage};
   border-radius: 10px;
   font-size: 0.95rem;
   font-family: inherit;
-  color: ${COLORS.text};
-  background: ${COLORS.cream};
+  color: ${({ theme }) => theme.colors.text};
+  background: ${({ theme }) => theme.colors.inputBg};
   transition:
     border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    background 0.3s ease,
+    color 0.3s ease;
 
   &:focus {
     outline: none;
-    border-color: ${COLORS.periwinkle};
-    background: ${COLORS.white};
+    border-color: ${({ theme }) => theme.colors.periwinkle};
+    background: ${({ theme }) => theme.colors.surface};
     box-shadow: 0 0 0 3px rgba(173, 178, 212, 0.35);
   }
 `;
@@ -99,21 +99,23 @@ export const FieldTextarea = styled.textarea`
   box-sizing: border-box;
   min-height: 120px;
   padding: 0.75rem 0.9rem;
-  border: 2px solid ${COLORS.sage};
+  border: 2px solid ${({ theme }) => theme.colors.sage};
   border-radius: 10px;
   font-size: 0.95rem;
   font-family: inherit;
-  color: ${COLORS.text};
-  background: ${COLORS.cream};
+  color: ${({ theme }) => theme.colors.text};
+  background: ${({ theme }) => theme.colors.inputBg};
   resize: vertical;
   transition:
     border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    background 0.3s ease,
+    color 0.3s ease;
 
   &:focus {
     outline: none;
-    border-color: ${COLORS.periwinkle};
-    background: ${COLORS.white};
+    border-color: ${({ theme }) => theme.colors.periwinkle};
+    background: ${({ theme }) => theme.colors.surface};
     box-shadow: 0 0 0 3px rgba(173, 178, 212, 0.35);
   }
 `;
@@ -121,7 +123,7 @@ export const FieldTextarea = styled.textarea`
 export const WordCount = styled.p`
   margin: 0.35rem 0 0;
   font-size: 0.8rem;
-  color: ${COLORS.textMuted};
+  color: ${({ theme }) => theme.colors.textMuted};
 `;
 
 export const ModalActions = styled.div`
@@ -149,11 +151,11 @@ export const ModalButton = styled.button`
     background 0.2s ease,
     opacity 0.2s ease;
 
-  ${({ $variant }) =>
+  ${({ $variant, theme }) =>
     $variant === "primary"
       ? `
-    background: ${COLORS.periwinkle};
-    color: ${COLORS.white};
+    background: ${theme.colors.periwinkle};
+    color: #fff;
 
     &:hover:not(:disabled) {
       background: #9ba0c8;
@@ -163,16 +165,16 @@ export const ModalButton = styled.button`
   `
       : `
     background: transparent;
-    color: ${COLORS.textMuted};
-    border: 2px solid ${COLORS.mist};
+    color: ${theme.colors.textMuted};
+    border: 2px solid ${theme.colors.mist};
 
     &:hover:not(:disabled) {
-      background: ${COLORS.cream};
+      background: ${theme.colors.inputBg};
     }
   `}
 
   &:focus-visible {
-    outline: 2px solid ${COLORS.periwinkle};
+    outline: 2px solid ${({ theme }) => theme.colors.periwinkle};
     outline-offset: 2px;
   }
 

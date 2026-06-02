@@ -1,26 +1,37 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { db } from "../../../firebase";
-import { doc, setDoc, addDoc, collection } from "firebase/firestore";
+import { doc, setDoc, collection } from "firebase/firestore";
 import { fetchNotes } from "../../main/_redux/MainSlice";
 
 export const saveNote = createAsyncThunk(
   "notes/saveNote",
-  async ({ updatingData, userUid, noteData }, { dispatch }) => {
+  async ({ updatingData, userUid, noteData }, { dispatch, getState }) => {
     const noteRef = updatingData
       ? doc(db, "newData", updatingData.id)
       : doc(collection(db, "newData"));
 
-    await setDoc(noteRef, {
-      id: updatingData ? updatingData.id : noteRef.id,
-      userId: userUid,
-      name: noteData.name,
-      description: noteData.description,
-      date: noteData.date,
-      stared: updatingData ? updatingData.stared : false,
-    });
+    const { data } = getState().main;
+    const maxOrder = data.reduce(
+      (max, note) => Math.max(max, typeof note.order === "number" ? note.order : -1),
+      -1
+    );
+    const order = updatingData?.order ?? maxOrder + 1;
 
-    // Fetch updated notes list
-    dispatch(fetchNotes({ userUid, isStared: false })); 
+    await setDoc(
+      noteRef,
+      {
+        id: updatingData ? updatingData.id : noteRef.id,
+        userId: userUid,
+        name: noteData.name,
+        description: noteData.description,
+        date: noteData.date,
+        stared: updatingData ? updatingData.stared : false,
+        order,
+      },
+      { merge: true }
+    );
+
+    dispatch(fetchNotes({ userUid, isStared: false }));
     return noteData;
   }
 );

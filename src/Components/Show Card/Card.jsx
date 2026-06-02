@@ -11,6 +11,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CloseButton,
+  DragHandle,
   EditActions,
   EditForm,
   FieldInput,
@@ -28,6 +30,7 @@ const ShowCard = ({
   isEntering = false,
   isExiting = false,
   onExitComplete,
+  dragHandleProps = null,
 }) => {
   const dispatch = useDispatch();
   const { status: saveStatus } = useSelector((state) => state.model);
@@ -35,12 +38,11 @@ const ShowCard = ({
   const [isEditing, setIsEditing] = useState(false);
   const [isStarLoading, setStarLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deletePulse, setDeletePulse] = useState(false);
   const [showSaveCheck, setShowSaveCheck] = useState(false);
   const [savedPulse, setSavedPulse] = useState(false);
 
   const nameRef = useRef(null);
-  const descRef = useRef(null);
-  const dateRef = useRef(null);
 
   useEffect(() => {
     if (isEditing && nameRef.current) {
@@ -48,9 +50,13 @@ const ShowCard = ({
     }
   }, [isEditing]);
 
-  const handleDelete = () => {
+  const handleDelete = (e) => {
+    e.stopPropagation();
     if (isDeleting) return;
-    setIsDeleting(true);
+    setDeletePulse(true);
+    setTimeout(() => {
+      setIsDeleting(true);
+    }, 200);
   };
 
   const handleExitComplete = () => {
@@ -58,14 +64,16 @@ const ShowCard = ({
     onExitComplete?.();
   };
 
-  const handleStar = () => {
+  const handleStar = (e) => {
+    e.stopPropagation();
     setStarLoading(true);
     dispatch(toggleStar({ noteId: data.id, userUid })).finally(() => {
       setStarLoading(false);
     });
   };
 
-  const handleEditOpen = () => {
+  const handleEditOpen = (e) => {
+    e.stopPropagation();
     setIsEditing(true);
   };
 
@@ -92,6 +100,8 @@ const ShowCard = ({
     });
   };
 
+  const isDragging = dragHandleProps?.isDragging ?? false;
+
   return (
     <AnimatedCard
       isEntering={isEntering}
@@ -101,8 +111,36 @@ const ShowCard = ({
       <NoteCard
         $isEditing={isEditing}
         $savedPulse={savedPulse}
+        $isDragging={isDragging}
+        data-dragging={isDragging ? "true" : undefined}
         aria-label={`Note: ${data.name}`}
       >
+        {dragHandleProps && !isEditing && (
+          <DragHandle
+            type="button"
+            aria-label={`Drag to reorder ${data.name}`}
+            {...dragHandleProps.listeners}
+          >
+            <span className="material-symbols-outlined">drag_indicator</span>
+          </DragHandle>
+        )}
+
+        {!isEditing && (
+          <CloseButton
+            type="button"
+            $pulse={deletePulse}
+            onClick={handleDelete}
+            disabled={isDeleting}
+            aria-label={`Delete note ${data.name}`}
+          >
+            {isDeleting ? (
+              <SmLoader />
+            ) : (
+              <span className="material-symbols-outlined">close</span>
+            )}
+          </CloseButton>
+        )}
+
         {showSaveCheck && (
           <SaveCheck aria-hidden="true">
             <span className="material-symbols-outlined">check</span>
@@ -118,19 +156,6 @@ const ShowCard = ({
             <CardDate dateTime={data.date}>{data.date}</CardDate>
 
             <CardActions className="card-actions">
-              <IconButton
-                type="button"
-                $variant="danger"
-                onClick={handleDelete}
-                disabled={isDeleting}
-                aria-label={`Delete note ${data.name}`}
-              >
-                {isDeleting ? (
-                  <SmLoader />
-                ) : (
-                  <span className="material-symbols-outlined">close</span>
-                )}
-              </IconButton>
               <IconButton
                 type="button"
                 onClick={handleEditOpen}
@@ -171,7 +196,6 @@ const ShowCard = ({
               <FieldLabel htmlFor={`desc-${data.id}`}>Description</FieldLabel>
               <FieldTextarea
                 id={`desc-${data.id}`}
-                ref={descRef}
                 name="desc"
                 defaultValue={data.description}
                 maxLength={300}
@@ -182,7 +206,6 @@ const ShowCard = ({
               <FieldLabel htmlFor={`date-${data.id}`}>Date</FieldLabel>
               <FieldInput
                 id={`date-${data.id}`}
-                ref={dateRef}
                 name="date"
                 type="date"
                 defaultValue={data.date}

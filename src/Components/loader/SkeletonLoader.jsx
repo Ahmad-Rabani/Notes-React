@@ -1,6 +1,5 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
-import { COLORS } from "../LoginandSignup/authPageStyles";
 
 const shimmer = keyframes`
   0% {
@@ -35,20 +34,19 @@ const SkeletonCard = styled.div`
   min-height: 260px;
   padding: 1.5rem;
   border-radius: 18px;
-  background: ${COLORS.cream};
-  border: 1px solid rgba(173, 178, 212, 0.35);
-  box-shadow:
-    0 4px 16px rgba(58, 61, 74, 0.06),
-    0 1px 4px rgba(173, 178, 212, 0.2);
+  background: ${({ theme }) => theme.colors.skeletonBase};
+  border: 1px solid ${({ theme }) => theme.colors.cardBorder};
+  box-shadow: ${({ theme }) => theme.colors.cardShadow};
+  transition: background 0.3s ease, border-color 0.3s ease;
 `;
 
 const ShimmerBlock = styled.div`
   border-radius: ${({ $radius }) => $radius || "10px"};
   background: linear-gradient(
     90deg,
-    ${COLORS.cream} 0%,
-    ${COLORS.mist} 45%,
-    ${COLORS.cream} 90%
+    ${({ theme }) => theme.colors.skeletonBase} 0%,
+    ${({ theme }) => theme.colors.skeletonShimmer} 45%,
+    ${({ theme }) => theme.colors.skeletonBase} 90%
   );
   background-size: 200% 100%;
   animation: ${shimmer} 1.6s ease-in-out infinite;

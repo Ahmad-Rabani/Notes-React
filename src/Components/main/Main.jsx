@@ -6,9 +6,11 @@ import { auth } from "../../firebase";
 import { fetchNotes } from "./_redux/MainSlice";
 import Create from "../card/CreateCard";
 import ShowCard from "../Show Card/Card";
+import SortableNotesList from "../Show Card/SortableNotesList";
 import SkeletonLoader from "../loader/SkeletonLoader";
 import {
   CardsGrid,
+  DndHint,
   EmptyState,
   FabButton,
   FabContainer,
@@ -96,6 +98,46 @@ const Main = () => {
   const isLoading = status === "loading" || status === "idle";
   const showSkeleton = isLoading && data.length === 0;
 
+  const renderNotes = () => {
+    if (data.length === 0) {
+      return (
+        <CardsGrid aria-live="polite">
+          <EmptyState>
+            {isStared
+              ? "No starred notes yet. Star a note to see it here."
+              : "No notes yet. Tap + to create your first note."}
+          </EmptyState>
+        </CardsGrid>
+      );
+    }
+
+    if (isStared) {
+      return (
+        <CardsGrid aria-live="polite">
+          {data.map((item) => (
+            <ShowCard
+              key={item.id}
+              data={item}
+              userUid={currentUserUid}
+              isEntering={enteringIds.has(item.id)}
+            />
+          ))}
+        </CardsGrid>
+      );
+    }
+
+    return (
+      <>
+        <DndHint>Drag the grip handle to reorder your notes</DndHint>
+        <SortableNotesList
+          data={data}
+          userUid={currentUserUid}
+          enteringIds={enteringIds}
+        />
+      </>
+    );
+  };
+
   return (
     <PageWrapper>
       <Header>
@@ -125,34 +167,15 @@ const Main = () => {
 
       {isCreateModal && (
         <Create
-          updatingData={currentId ? data.find((item) => item.id === currentId) : undefined}
+          updatingData={
+            currentId ? data.find((item) => item.id === currentId) : undefined
+          }
           showModel={setModel}
           userUid={currentUserUid}
         />
       )}
 
-      {showSkeleton ? (
-        <SkeletonLoader count={6} />
-      ) : (
-        <CardsGrid aria-live="polite">
-          {data.length === 0 ? (
-            <EmptyState>
-              {isStared
-                ? "No starred notes yet. Star a note to see it here."
-                : "No notes yet. Tap + to create your first note."}
-            </EmptyState>
-          ) : (
-            data.map((item) => (
-              <ShowCard
-                key={item.id}
-                data={item}
-                userUid={currentUserUid}
-                isEntering={enteringIds.has(item.id)}
-              />
-            ))
-          )}
-        </CardsGrid>
-      )}
+      {showSkeleton ? <SkeletonLoader count={6} /> : renderNotes()}
 
       <FabContainer>
         <FabLabel>Add note</FabLabel>

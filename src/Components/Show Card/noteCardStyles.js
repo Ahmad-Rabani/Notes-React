@@ -1,5 +1,4 @@
 import styled, { css, keyframes } from "styled-components";
-import { COLORS } from "../LoginandSignup/authPageStyles";
 
 const savePulse = keyframes`
   0% {
@@ -33,6 +32,20 @@ const checkPop = keyframes`
   }
 `;
 
+const deletePulse = keyframes`
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(139, 64, 73, 0.5);
+  }
+  50% {
+    transform: scale(1.2);
+    box-shadow: 0 0 0 6px rgba(139, 64, 73, 0);
+  }
+  100% {
+    transform: scale(1);
+  }
+`;
+
 export const NoteCard = styled.article`
   position: relative;
   display: flex;
@@ -40,27 +53,34 @@ export const NoteCard = styled.article`
   width: 100%;
   min-height: 260px;
   padding: 1.5rem;
+  padding-top: 2.75rem;
   border-radius: 18px;
-  background: ${COLORS.white};
-  border: 1px solid rgba(173, 178, 212, 0.35);
-  box-shadow:
-    0 4px 16px rgba(58, 61, 74, 0.08),
-    0 1px 4px rgba(173, 178, 212, 0.25);
+  background: ${({ theme }) => theme.colors.cardBg};
+  border: 1px solid ${({ theme }) => theme.colors.cardBorder};
+  box-shadow: ${({ theme }) => theme.colors.cardShadow};
   font-family: "Barlow", sans-serif;
   transition:
     transform 0.35s cubic-bezier(0.34, 1.2, 0.64, 1),
     box-shadow 0.35s ease,
     min-height 0.45s cubic-bezier(0.65, 0, 0.35, 1),
-    border-color 0.3s ease;
+    border-color 0.3s ease,
+    background-color 0.3s ease;
+
+  ${({ $isDragging }) =>
+    $isDragging &&
+    css`
+      transform: scale(1.03);
+      box-shadow: ${({ theme }) => theme.colors.dragOverlayShadow};
+    `}
 
   ${({ $isEditing }) =>
     $isEditing &&
     css`
       min-height: 420px;
-      border-color: ${COLORS.sage};
+      border-color: ${({ theme }) => theme.colors.sage};
       box-shadow:
         0 12px 32px rgba(173, 178, 212, 0.35),
-        0 0 0 3px rgba(213, 229, 213, 0.6);
+        0 0 0 3px rgba(213, 229, 213, 0.4);
     `}
 
   ${({ $savedPulse }) =>
@@ -69,11 +89,9 @@ export const NoteCard = styled.article`
       animation: ${savePulse} 0.65s ease;
     `}
 
-  &:hover {
+  &:hover:not([data-dragging="true"]) {
     transform: translateY(-4px);
-    box-shadow:
-      0 12px 28px rgba(58, 61, 74, 0.12),
-      0 4px 12px rgba(173, 178, 212, 0.35);
+    box-shadow: ${({ theme }) => theme.colors.cardHoverShadow};
 
     .card-actions {
       opacity: 1;
@@ -81,22 +99,154 @@ export const NoteCard = styled.article`
   }
 
   &:focus-within {
-    outline: 2px solid ${COLORS.periwinkle};
+    outline: 2px solid ${({ theme }) => theme.colors.periwinkle};
     outline-offset: 3px;
+  }
+`;
+
+export const CloseButton = styled.button`
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: ${({ theme }) => theme.colors.inputBg};
+  color: ${({ theme }) => theme.colors.textMuted};
+  cursor: pointer;
+  transition:
+    transform 0.2s cubic-bezier(0.34, 1.2, 0.64, 1),
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  .material-symbols-outlined {
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  ${({ $pulse }) =>
+    $pulse &&
+    css`
+      animation: ${deletePulse} 0.35s ease;
+    `}
+
+  &:hover:not(:disabled) {
+    transform: scale(1.15);
+    background: ${({ theme }) => theme.colors.error};
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(139, 64, 73, 0.4);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.92);
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.error};
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
+export const DragHandle = styled.button`
+  position: absolute;
+  top: 0.65rem;
+  left: 0.65rem;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: ${({ theme }) => theme.colors.sage};
+  color: ${({ theme }) => theme.colors.text};
+  cursor: grab;
+  touch-action: none;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+
+  .material-symbols-outlined {
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  &:hover {
+    transform: scale(1.08);
+    background: ${({ theme }) => theme.colors.periwinkle};
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(173, 178, 212, 0.4);
+  }
+
+  &:active {
+    cursor: grabbing;
+    transform: scale(0.95);
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.periwinkle};
+    outline-offset: 2px;
+  }
+`;
+
+export const DragOverlayCard = styled.div`
+  width: min(300px, 90vw);
+  min-height: 200px;
+  padding: 1.5rem;
+  padding-top: 2.5rem;
+  border-radius: 18px;
+  background: ${({ theme }) => theme.colors.cardBg};
+  border: 2px solid ${({ theme }) => theme.colors.sage};
+  box-shadow: ${({ theme }) => theme.colors.dragOverlayShadow};
+  transform: scale(1.05) rotate(1deg);
+  cursor: grabbing;
+  font-family: "Barlow", sans-serif;
+  color: ${({ theme }) => theme.colors.text};
+
+  strong {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: ${({ theme }) => theme.colors.textMuted};
+    line-height: 1.5;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
   }
 `;
 
 export const CardHeader = styled.div`
   padding-bottom: 0.75rem;
   margin-bottom: 0.75rem;
-  border-bottom: 2px solid ${COLORS.sage};
+  border-bottom: 2px solid ${({ theme }) => theme.colors.sage};
 `;
 
 export const CardTitle = styled.h3`
   margin: 0;
   font-size: 1.2rem;
   font-weight: 700;
-  color: ${COLORS.text};
+  color: ${({ theme }) => theme.colors.text};
   letter-spacing: -0.01em;
   line-height: 1.3;
   word-break: break-word;
@@ -107,7 +257,7 @@ export const CardDescription = styled.p`
   margin: 0 0 1rem;
   font-size: 0.95rem;
   line-height: 1.55;
-  color: ${COLORS.textMuted};
+  color: ${({ theme }) => theme.colors.textMuted};
   overflow-y: auto;
   max-height: 120px;
   padding-right: 0.25rem;
@@ -118,7 +268,7 @@ export const CardDescription = styled.p`
   }
 
   &::-webkit-scrollbar-thumb {
-    background: ${COLORS.periwinkle};
+    background: ${({ theme }) => theme.colors.periwinkle};
     border-radius: 4px;
   }
 `;
@@ -127,7 +277,7 @@ export const CardDate = styled.time`
   display: block;
   font-size: 0.85rem;
   font-weight: 500;
-  color: ${COLORS.textMuted};
+  color: ${({ theme }) => theme.colors.textMuted};
   opacity: 0.85;
 `;
 
@@ -154,10 +304,8 @@ export const IconButton = styled.button`
   padding: 0;
   border: none;
   border-radius: 50%;
-  background: ${({ $variant }) =>
-    $variant === "danger" ? "rgba(139, 64, 73, 0.1)" : COLORS.sage};
-  color: ${({ $variant }) =>
-    $variant === "danger" ? COLORS.error : COLORS.text};
+  background: ${({ theme }) => theme.colors.sage};
+  color: ${({ theme }) => theme.colors.text};
   cursor: pointer;
   transition:
     transform 0.2s cubic-bezier(0.34, 1.2, 0.64, 1),
@@ -172,9 +320,8 @@ export const IconButton = styled.button`
 
   &:hover:not(:disabled) {
     transform: scale(1.1);
-    background: ${({ $variant }) =>
-      $variant === "danger" ? COLORS.error : COLORS.periwinkle};
-    color: ${COLORS.white};
+    background: ${({ theme }) => theme.colors.periwinkle};
+    color: #fff;
     box-shadow: 0 4px 12px rgba(173, 178, 212, 0.45);
   }
 
@@ -183,7 +330,7 @@ export const IconButton = styled.button`
   }
 
   &:focus-visible {
-    outline: 2px solid ${COLORS.periwinkle};
+    outline: 2px solid ${({ theme }) => theme.colors.periwinkle};
     outline-offset: 2px;
   }
 
@@ -195,7 +342,7 @@ export const IconButton = styled.button`
   ${({ $active }) =>
     $active &&
     css`
-      background: ${COLORS.cream};
+      background: ${({ theme }) => theme.colors.cream};
       color: #c9a227;
       box-shadow: inset 0 0 0 2px rgba(201, 162, 39, 0.35);
     `}
@@ -224,7 +371,7 @@ export const FieldLabel = styled.label`
   display: block;
   font-size: 0.8rem;
   font-weight: 600;
-  color: ${COLORS.text};
+  color: ${({ theme }) => theme.colors.text};
   margin-bottom: 0.35rem;
 `;
 
@@ -232,12 +379,12 @@ export const FieldInput = styled.input`
   width: 100%;
   box-sizing: border-box;
   padding: 0.7rem 0.85rem;
-  border: 2px solid ${COLORS.sage};
+  border: 2px solid ${({ theme }) => theme.colors.sage};
   border-radius: 10px;
   font-size: 0.95rem;
   font-family: inherit;
-  color: ${COLORS.text};
-  background: ${COLORS.cream};
+  color: ${({ theme }) => theme.colors.text};
+  background: ${({ theme }) => theme.colors.inputBg};
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease,
@@ -245,8 +392,8 @@ export const FieldInput = styled.input`
 
   &:focus {
     outline: none;
-    border-color: ${COLORS.periwinkle};
-    background: ${COLORS.white};
+    border-color: ${({ theme }) => theme.colors.periwinkle};
+    background: ${({ theme }) => theme.colors.surface};
     box-shadow: 0 0 0 3px rgba(173, 178, 212, 0.35);
   }
 `;
@@ -257,12 +404,12 @@ export const FieldTextarea = styled.textarea`
   min-height: 100px;
   max-height: 140px;
   padding: 0.7rem 0.85rem;
-  border: 2px solid ${COLORS.sage};
+  border: 2px solid ${({ theme }) => theme.colors.sage};
   border-radius: 10px;
   font-size: 0.95rem;
   font-family: inherit;
-  color: ${COLORS.text};
-  background: ${COLORS.cream};
+  color: ${({ theme }) => theme.colors.text};
+  background: ${({ theme }) => theme.colors.inputBg};
   resize: vertical;
   transition:
     border-color 0.2s ease,
@@ -271,8 +418,8 @@ export const FieldTextarea = styled.textarea`
 
   &:focus {
     outline: none;
-    border-color: ${COLORS.periwinkle};
-    background: ${COLORS.white};
+    border-color: ${({ theme }) => theme.colors.periwinkle};
+    background: ${({ theme }) => theme.colors.surface};
     box-shadow: 0 0 0 3px rgba(173, 178, 212, 0.35);
   }
 `;
@@ -298,11 +445,11 @@ export const ActionButton = styled.button`
     background 0.2s ease,
     opacity 0.2s ease;
 
-  ${({ $variant }) =>
+  ${({ $variant, theme }) =>
     $variant === "primary"
       ? css`
-          background: ${COLORS.periwinkle};
-          color: ${COLORS.white};
+          background: ${theme.colors.periwinkle};
+          color: #fff;
 
           &:hover:not(:disabled) {
             background: #9ba0c8;
@@ -312,17 +459,17 @@ export const ActionButton = styled.button`
         `
       : css`
           background: transparent;
-          color: ${COLORS.textMuted};
-          border: 2px solid ${COLORS.mist};
+          color: ${theme.colors.textMuted};
+          border: 2px solid ${theme.colors.mist};
 
           &:hover:not(:disabled) {
-            background: ${COLORS.cream};
+            background: ${theme.colors.inputBg};
             transform: translateY(-1px);
           }
         `}
 
   &:focus-visible {
-    outline: 2px solid ${COLORS.periwinkle};
+    outline: 2px solid ${({ theme }) => theme.colors.periwinkle};
     outline-offset: 2px;
   }
 
@@ -334,16 +481,16 @@ export const ActionButton = styled.button`
 
 export const SaveCheck = styled.span`
   position: absolute;
-  top: 1rem;
-  right: 1rem;
+  top: 0.65rem;
+  right: 2.75rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: ${COLORS.sage};
-  color: ${COLORS.text};
+  background: ${({ theme }) => theme.colors.sage};
+  color: ${({ theme }) => theme.colors.text};
   animation: ${checkPop} 0.45s cubic-bezier(0.34, 1.4, 0.64, 1) both;
 
   .material-symbols-outlined {
