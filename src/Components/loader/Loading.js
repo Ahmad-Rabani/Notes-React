@@ -1,18 +1,12 @@
-import React from 'react'
-import { LoadingsScreen,SmallLoader } from './LoaderStylled'
-
-const Loader = () => {
-  return (
-    <LoadingsScreen>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif" alt="" />
-    </LoadingsScreen>
-  )
-}
+import React from "react";
+import { SmallLoader } from "./LoaderStylled";
 
 export const SmLoader = () => {
-  return (
-    <SmallLoader></SmallLoader>
-  )
-}
+  return <SmallLoader role="status" aria-label="Loading" />;
+};
 
-export default Loader
+const Loader = () => {
+  return null;
+};
+
+export default Loader;

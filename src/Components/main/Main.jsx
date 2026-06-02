@@ -1,13 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebase";
-import { fetchNotes, deleteNote } from "./_redux/MainSlice";
+import { fetchNotes } from "./_redux/MainSlice";
 import Create from "../card/CreateCard";
 import ShowCard from "../Show Card/Card";
-import Loader from "../loader/Loading";
-import "./mainstyle.scss";
+import SkeletonLoader from "../loader/SkeletonLoader";
+import {
+  CardsGrid,
+  EmptyState,
+  FabButton,
+  FabContainer,
+  FabLabel,
+  FilterButton,
+  FilterGroup,
+  Header,
+  LogoutButton,
+  PageTitle,
+  PageWrapper,
+} from "./notesPageStyles";
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -19,6 +31,10 @@ const Main = () => {
   const [currentId, setId] = useState();
   const [isCreateModal, setModel] = useState(false);
   const [currentUserUid, setCurrentUserUid] = useState(null);
+  const [enteringIds, setEnteringIds] = useState(new Set());
+
+  const prevIdsRef = useRef(new Set());
+  const isInitialLoad = useRef(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -31,21 +47,41 @@ const Main = () => {
     });
 
     return () => unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (currentUserUid) {
       dispatch(fetchNotes({ userUid: currentUserUid, isStared }));
     }
-  }, [isStared]);
+  }, [currentUserUid, isStared, dispatch]);
 
-  const handleDelete = async (id) => {
-    dispatch(deleteNote({ noteId: id, userUid: currentUserUid }));
-  };
+  useEffect(() => {
+    if (status !== "succeeded") return;
 
-  const updateData = (id) => {
+    const currentIds = new Set(data.map((item) => item.id));
+
+    if (isInitialLoad.current) {
+      prevIdsRef.current = currentIds;
+      isInitialLoad.current = false;
+      return;
+    }
+
+    const newIds = [...currentIds].filter((id) => !prevIdsRef.current.has(id));
+
+    if (newIds.length > 0) {
+      setEnteringIds(new Set(newIds));
+      const timer = setTimeout(() => setEnteringIds(new Set()), 650);
+      prevIdsRef.current = currentIds;
+      return () => clearTimeout(timer);
+    }
+
+    prevIdsRef.current = currentIds;
+  }, [data, status]);
+
+  const openCreateModal = () => {
+    setId(undefined);
     setModel(true);
-    setId(id);
   };
 
   const toggleStaredView = () => {
@@ -55,63 +91,80 @@ const Main = () => {
   const handleLogout = () => {
     localStorage.removeItem("userLoggedIn");
     navigate("/login", { replace: true });
-  }
+  };
+
+  const isLoading = status === "loading" || status === "idle";
+  const showSkeleton = isLoading && data.length === 0;
 
   return (
-    <div>
-      <div className="head-div">
-        <div className="notes">
-          <h2>Notes</h2>
-        </div>
-        <div className="all-and-stared">
-          <button className={`button primary ${!isStared ? "is-clicked" : ""}`} onClick={() => setSearchParams({})}>
+    <PageWrapper>
+      <Header>
+        <PageTitle>Notes</PageTitle>
+        <FilterGroup>
+          <FilterButton
+            $active={!isStared}
+            onClick={() => setSearchParams({})}
+            type="button"
+            aria-pressed={!isStared}
+          >
             All
-          </button>
-          <button
-            className={`button secondry ${isStared ? "is-clicked" : ""}`}
+          </FilterButton>
+          <FilterButton
+            $active={isStared}
             onClick={toggleStaredView}
             type="button"
+            aria-pressed={isStared}
           >
-            Only Stared
-          </button>
-          <button className="button outline" onClick={handleLogout}>
+            Starred
+          </FilterButton>
+          <LogoutButton type="button" onClick={handleLogout}>
             Logout
-          </button>
-        </div>
-      </div>
-      <br />
+          </LogoutButton>
+        </FilterGroup>
+      </Header>
 
       {isCreateModal && (
         <Create
-          updatingData={data.find((item) => item.id === currentId)}
+          updatingData={currentId ? data.find((item) => item.id === currentId) : undefined}
           showModel={setModel}
           userUid={currentUserUid}
         />
       )}
 
-      <div className="cards-div">
-        {status === "loading" ? (
-          <Loader />
-        ) : (
-          data.map((item) => (
-            <ShowCard
-              key={item.id}
-              data={item}
-              handleClose={handleDelete}
-              handleUpdate={updateData}
-              userUid={currentUserUid}
-            />
-          ))
-        )}
-      </div>
+      {showSkeleton ? (
+        <SkeletonLoader count={6} />
+      ) : (
+        <CardsGrid aria-live="polite">
+          {data.length === 0 ? (
+            <EmptyState>
+              {isStared
+                ? "No starred notes yet. Star a note to see it here."
+                : "No notes yet. Tap + to create your first note."}
+            </EmptyState>
+          ) : (
+            data.map((item) => (
+              <ShowCard
+                key={item.id}
+                data={item}
+                userUid={currentUserUid}
+                isEntering={enteringIds.has(item.id)}
+              />
+            ))
+          )}
+        </CardsGrid>
+      )}
 
-      <div className="add-notes">
-        <h2>Add Notes</h2>
-        <span onClick={() => setModel(true)}>
-          <h1>+</h1>
-        </span>
-      </div>
-    </div>
+      <FabContainer>
+        <FabLabel>Add note</FabLabel>
+        <FabButton
+          type="button"
+          onClick={openCreateModal}
+          aria-label="Add new note"
+        >
+          +
+        </FabButton>
+      </FabContainer>
+    </PageWrapper>
   );
 };
 
