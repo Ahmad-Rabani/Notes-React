@@ -21,6 +21,8 @@ import ShowCard from "./Card";
 import { updateNotesOrder, setNotesOrderOptimistic } from "../main/_redux/MainSlice";
 import { CardsGrid } from "../main/notesPageStyles";
 import { DragOverlayCard } from "./noteCardStyles";
+import { useTheme } from "../../theme/ThemeProvider";
+import { getCardSurfaceStyles } from "../utils/cardColors";
 
 const SortableNoteWrapper = ({ id, children, disabled }) => {
   const {
@@ -54,6 +56,7 @@ const SortableNotesList = ({
   searchQuery = "",
 }) => {
   const dispatch = useDispatch();
+  const { isDark } = useTheme();
   const [items, setItems] = useState(() => data.map((note) => note.id));
   const [activeId, setActiveId] = useState(null);
 
@@ -141,7 +144,14 @@ const SortableNotesList = ({
         }}
       >
         {activeNote ? (
-          <DragOverlayCard>
+          <DragOverlayCard
+            $surfaceBg={
+              getCardSurfaceStyles(activeNote.cardColor, isDark)?.bg
+            }
+            $surfaceBorder={
+              getCardSurfaceStyles(activeNote.cardColor, isDark)?.border
+            }
+          >
             <strong>{activeNote.name}</strong>
             <p>{activeNote.description}</p>
           </DragOverlayCard>

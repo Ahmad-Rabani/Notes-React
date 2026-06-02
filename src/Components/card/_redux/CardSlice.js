@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { db } from "../../../firebase";
 import { doc, setDoc, collection } from "firebase/firestore";
+import { DEFAULT_CARD_COLOR } from "../../utils/cardColors";
 import { fetchNotes } from "../../main/_redux/MainSlice";
 
 export const saveNote = createAsyncThunk(
@@ -27,6 +28,7 @@ export const saveNote = createAsyncThunk(
         date: noteData.date,
         stared: updatingData ? updatingData.stared : false,
         order,
+        cardColor: updatingData?.cardColor ?? DEFAULT_CARD_COLOR,
       },
       { merge: true }
     );

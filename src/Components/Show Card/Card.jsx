@@ -1,10 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteNote, toggleStar } from "./_redux/ShowCardSlice";
 import { saveNote } from "../card/_redux/CardSlice";
+import { updateCardColor } from "./_redux/cardColorActions";
 import { SmLoader } from "../loader/Loading";
 import AnimatedCard from "./AnimatedCard";
 import HighlightText from "../utils/HighlightText";
+import CardColorPicker from "./CardColorPicker";
+import {
+  DEFAULT_CARD_COLOR,
+  getCardSurfaceStyles,
+} from "../utils/cardColors";
+import { useTheme } from "../../theme/ThemeProvider";
 import {
   ActionButton,
   CardActions,
@@ -43,6 +50,7 @@ const ShowCard = ({
   searchQuery = "",
 }) => {
   const dispatch = useDispatch();
+  const { isDark } = useTheme();
   const { status: saveStatus } = useSelector((state) => state.model);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -53,6 +61,8 @@ const ShowCard = ({
   });
   const [editWords, setEditWords] = useState(0);
   const [isStarLoading, setStarLoading] = useState(false);
+  const [isColorSaving, setColorSaving] = useState(false);
+  const [isColorPickerOpen, setColorPickerOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deletePulse, setDeletePulse] = useState(false);
   const [showSaveCheck, setShowSaveCheck] = useState(false);
@@ -60,7 +70,13 @@ const ShowCard = ({
 
   const nameRef = useRef(null);
 
-  const isDraggable = Boolean(dragProps && !isEditing);
+  const cardColorId = data.cardColor || DEFAULT_CARD_COLOR;
+  const surfaceStyles = useMemo(
+    () => getCardSurfaceStyles(cardColorId, isDark),
+    [cardColorId, isDark]
+  );
+
+  const isDraggable = Boolean(dragProps && !isEditing && !isColorPickerOpen);
   const isDragging = dragProps?.isDragging ?? false;
 
   useEffect(() => {
@@ -91,8 +107,23 @@ const ShowCard = ({
     });
   };
 
+  const handleColorSelect = (colorId) => {
+    if (colorId === cardColorId) {
+      setColorPickerOpen(false);
+      return;
+    }
+
+    setColorSaving(true);
+    dispatch(updateCardColor({ noteId: data.id, userUid, cardColor: colorId }))
+      .finally(() => {
+        setColorSaving(false);
+        setColorPickerOpen(false);
+      });
+  };
+
   const handleEditOpen = (e) => {
     e.stopPropagation();
+    setColorPickerOpen(false);
     const description = data.description ?? "";
     setEditForm({
       name: data.name ?? "",
@@ -148,6 +179,8 @@ const ShowCard = ({
         $savedPulse={savedPulse}
         $isDragging={isDragging}
         $isDraggable={isDraggable}
+        $surfaceBg={surfaceStyles?.bg}
+        $surfaceBorder={surfaceStyles?.border}
         data-dragging={isDragging ? "true" : undefined}
         data-editing={isEditing ? "true" : undefined}
         aria-label={`Note: ${data.name}`}
@@ -179,7 +212,7 @@ const ShowCard = ({
 
         {!isEditing ? (
           <ViewContent>
-            <CardHeader>
+            <CardHeader $accentColor={surfaceStyles?.accent}>
               <CardTitle>
                 <HighlightText text={data.name} query={searchQuery} />
               </CardTitle>
@@ -192,6 +225,13 @@ const ShowCard = ({
             </CardDate>
 
             <CardActions className="card-actions">
+              <CardColorPicker
+                currentColor={cardColorId}
+                onSelect={handleColorSelect}
+                isOpen={isColorPickerOpen}
+                onToggle={setColorPickerOpen}
+                isSaving={isColorSaving}
+              />
               <IconButton
                 type="button"
                 onClick={handleEditOpen}

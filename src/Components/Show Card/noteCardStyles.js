@@ -55,8 +55,9 @@ export const NoteCard = styled.article`
   padding: 1.5rem;
   padding-top: 2.25rem;
   border-radius: 18px;
-  background: ${({ theme }) => theme.colors.cardBg};
-  border: 1px solid ${({ theme }) => theme.colors.cardBorder};
+  background: ${({ $surfaceBg, theme }) => $surfaceBg || theme.colors.cardBg};
+  border: 1px solid ${({ $surfaceBorder, theme }) =>
+    $surfaceBorder || theme.colors.cardBorder};
   box-shadow: ${({ theme }) => theme.colors.cardShadow};
   font-family: "Barlow", sans-serif;
   touch-action: ${({ $isDraggable }) => ($isDraggable ? "none" : "auto")};
@@ -168,8 +169,9 @@ export const DragOverlayCard = styled.div`
   min-height: 220px;
   padding: 1.5rem;
   border-radius: 18px;
-  background: ${({ theme }) => theme.colors.cardBg};
-  border: 2px solid ${({ theme }) => theme.colors.primary};
+  background: ${({ $surfaceBg, theme }) => $surfaceBg || theme.colors.cardBg};
+  border: 2px solid
+    ${({ $surfaceBorder, theme }) => $surfaceBorder || theme.colors.primary};
   box-shadow: ${({ theme }) => theme.colors.dragOverlayShadow};
   transform: scale(1.05) rotate(1deg);
   cursor: grabbing;
@@ -197,7 +199,8 @@ export const DragOverlayCard = styled.div`
 export const CardHeader = styled.div`
   padding-bottom: 0.75rem;
   margin-bottom: 0.75rem;
-  border-bottom: 2px solid ${({ theme }) => theme.colors.sage};
+  border-bottom: 2px solid
+    ${({ $accentColor, theme }) => $accentColor || theme.colors.primary};
 `;
 
 export const CardTitle = styled.h3`
@@ -529,4 +532,129 @@ export const ViewContent = styled.div`
     css`
       display: none;
     `}
+`;
+
+export const ColorPickerWrapper = styled.div`
+  position: relative;
+  display: inline-flex;
+
+  .color-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: ${({ theme }) => theme.colors.paleBlue};
+    color: ${({ theme }) => theme.colors.text};
+    cursor: pointer;
+    transition:
+      transform 0.2s cubic-bezier(0.34, 1.2, 0.64, 1),
+      background 0.2s ease,
+      box-shadow 0.2s ease;
+
+    .material-symbols-outlined {
+      font-size: 0.95rem;
+      line-height: 1;
+      opacity: 0.85;
+    }
+
+    .color-preview {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 1px 4px rgba(17, 45, 78, 0.2);
+    }
+
+    &:hover:not(:disabled) {
+      transform: scale(1.1);
+      background: ${({ theme }) => theme.colors.primary};
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(63, 114, 175, 0.4);
+    }
+
+    &:focus-visible {
+      outline: 2px solid ${({ theme }) => theme.colors.primary};
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+`;
+
+export const ColorPickerPanel = styled.div`
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 20;
+  min-width: 180px;
+  padding: 0.75rem;
+  border-radius: 14px;
+  background: ${({ theme }) => theme.colors.surface};
+  border: 1px solid ${({ theme }) => theme.colors.cardBorder};
+  box-shadow: ${({ theme }) => theme.colors.cardHoverShadow};
+  animation: fadeSlideIn 0.25s cubic-bezier(0.34, 1.2, 0.64, 1) both;
+
+  @keyframes fadeSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(6px) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+`;
+
+export const ColorPickerTitle = styled.p`
+  margin: 0 0 0.55rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: ${({ theme }) => theme.colors.textMuted};
+`;
+
+export const ColorSwatchGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.45rem;
+`;
+
+export const ColorSwatch = styled.button`
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid
+    ${({ $active, theme }) => ($active ? theme.colors.primary : "transparent")};
+  background: ${({ $color }) => $color};
+  cursor: pointer;
+  box-shadow: ${({ $active }) =>
+    $active
+      ? "0 0 0 2px rgba(63, 114, 175, 0.35)"
+      : "0 1px 4px rgba(17, 45, 78, 0.15)"};
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+
+  &:hover {
+    transform: scale(1.12);
+    box-shadow: 0 3px 10px rgba(17, 45, 78, 0.2);
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.primary};
+    outline-offset: 2px;
+  }
 `;
