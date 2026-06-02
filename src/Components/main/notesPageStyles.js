@@ -114,10 +114,10 @@ export const LogoutButton = styled(FilterButton)`
 
 export const CardsGrid = styled.section`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
+  gap: 1.5rem;
   width: 100%;
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
   animation: ${fadeIn} 0.55s ease 0.1s both;
 `;

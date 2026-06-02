@@ -14,7 +14,11 @@ import {
   CloseButton,
   DragHandle,
   EditActions,
+  EditFieldGroup,
   EditForm,
+  EditFormHeader,
+  EditFormSubtitle,
+  EditFormTitle,
   FieldInput,
   FieldLabel,
   FieldTextarea,
@@ -22,6 +26,7 @@ import {
   NoteCard,
   SaveCheck,
   ViewContent,
+  WordCount,
 } from "./noteCardStyles";
 
 const ShowCard = ({
@@ -36,6 +41,12 @@ const ShowCard = ({
   const { status: saveStatus } = useSelector((state) => state.model);
 
   const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({
+    name: data.name,
+    description: data.description,
+    date: data.date,
+  });
+  const [editWords, setEditWords] = useState(0);
   const [isStarLoading, setStarLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deletePulse, setDeletePulse] = useState(false);
@@ -74,6 +85,14 @@ const ShowCard = ({
 
   const handleEditOpen = (e) => {
     e.stopPropagation();
+    const description = data.description ?? "";
+    setEditForm({
+      name: data.name ?? "",
+      description,
+      date: data.date ?? "",
+    });
+    const wordList = description.trim().split(/\s+/);
+    setEditWords(wordList.filter(Boolean).length);
     setIsEditing(true);
   };
 
@@ -81,13 +100,23 @@ const ShowCard = ({
     setIsEditing(false);
   };
 
+  const handleEditChange = (field) => (e) => {
+    const value = e.target.value;
+    setEditForm((prev) => ({ ...prev, [field]: value }));
+
+    if (field === "description") {
+      const wordList = value.trim().split(/\s+/);
+      setEditWords(wordList.filter(Boolean).length);
+    }
+  };
+
   const handleEditSubmit = (e) => {
     e.preventDefault();
-    const form = e.target;
+
     const noteData = {
-      name: form.title.value,
-      description: form.desc.value,
-      date: form.date.value,
+      name: editForm.name.trim(),
+      description: editForm.description.trim(),
+      date: editForm.date,
     };
 
     dispatch(saveNote({ updatingData: data, userUid, noteData })).then(() => {
@@ -181,37 +210,63 @@ const ShowCard = ({
           </ViewContent>
         ) : (
           <EditForm onSubmit={handleEditSubmit}>
-            <div>
-              <FieldLabel htmlFor={`title-${data.id}`}>Name</FieldLabel>
+            <EditFormHeader>
+              <EditFormTitle>
+                <span className="material-symbols-outlined">edit_note</span>
+                Edit Note
+              </EditFormTitle>
+              <EditFormSubtitle>Update your note details below.</EditFormSubtitle>
+            </EditFormHeader>
+
+            <EditFieldGroup>
+              <FieldLabel htmlFor={`title-${data.id}`}>
+                <span className="material-symbols-outlined">title</span>
+                Name
+              </FieldLabel>
               <FieldInput
                 id={`title-${data.id}`}
                 ref={nameRef}
                 name="title"
                 type="text"
-                defaultValue={data.name}
+                placeholder="Note title"
+                value={editForm.name}
+                onChange={handleEditChange("name")}
                 required
               />
-            </div>
-            <div>
-              <FieldLabel htmlFor={`desc-${data.id}`}>Description</FieldLabel>
+            </EditFieldGroup>
+
+            <EditFieldGroup>
+              <FieldLabel htmlFor={`desc-${data.id}`}>
+                <span className="material-symbols-outlined">notes</span>
+                Description
+              </FieldLabel>
               <FieldTextarea
                 id={`desc-${data.id}`}
                 name="desc"
-                defaultValue={data.description}
+                placeholder="Write your note here…"
                 maxLength={300}
+                value={editForm.description}
+                onChange={handleEditChange("description")}
                 required
               />
-            </div>
-            <div>
-              <FieldLabel htmlFor={`date-${data.id}`}>Date</FieldLabel>
+              <WordCount>{editWords} words · max 300 characters</WordCount>
+            </EditFieldGroup>
+
+            <EditFieldGroup>
+              <FieldLabel htmlFor={`date-${data.id}`}>
+                <span className="material-symbols-outlined">calendar_today</span>
+                Date
+              </FieldLabel>
               <FieldInput
                 id={`date-${data.id}`}
                 name="date"
                 type="date"
-                defaultValue={data.date}
+                value={editForm.date}
+                onChange={handleEditChange("date")}
                 required
               />
-            </div>
+            </EditFieldGroup>
+
             <EditActions>
               <ActionButton type="button" onClick={handleEditCancel}>
                 Cancel
@@ -221,7 +276,7 @@ const ShowCard = ({
                 $variant="primary"
                 disabled={saveStatus === "loading"}
               >
-                {saveStatus === "loading" ? "Saving…" : "Save"}
+                {saveStatus === "loading" ? "Saving…" : "Save Changes"}
               </ActionButton>
             </EditActions>
           </EditForm>

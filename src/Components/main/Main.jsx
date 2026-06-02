@@ -30,7 +30,7 @@ const Main = () => {
   const isStared = searchParams.get("stared") === "true";
 
   const { data, status } = useSelector((state) => state.main);
-  const [currentId, setId] = useState();
+  const [modalKey, setModalKey] = useState(0);
   const [isCreateModal, setModel] = useState(false);
   const [currentUserUid, setCurrentUserUid] = useState(null);
   const [enteringIds, setEnteringIds] = useState(new Set());
@@ -82,7 +82,7 @@ const Main = () => {
   }, [data, status]);
 
   const openCreateModal = () => {
-    setId(undefined);
+    setModalKey((key) => key + 1);
     setModel(true);
   };
 
@@ -167,9 +167,7 @@ const Main = () => {
 
       {isCreateModal && (
         <Create
-          updatingData={
-            currentId ? data.find((item) => item.id === currentId) : undefined
-          }
+          key={`add-note-${modalKey}`}
           showModel={setModel}
           userUid={currentUserUid}
         />

@@ -205,8 +205,8 @@ export const DragHandle = styled.button`
 `;
 
 export const DragOverlayCard = styled.div`
-  width: min(300px, 90vw);
-  min-height: 200px;
+  width: min(360px, 90vw);
+  min-height: 220px;
   padding: 1.5rem;
   padding-top: 2.5rem;
   border-radius: 18px;
@@ -352,7 +352,7 @@ export const EditForm = styled.form`
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: 0.85rem;
+  gap: 1rem;
   animation: fadeSlideIn 0.4s cubic-bezier(0.65, 0, 0.35, 1) both;
 
   @keyframes fadeSlideIn {
@@ -367,20 +367,63 @@ export const EditForm = styled.form`
   }
 `;
 
+export const EditFormHeader = styled.div`
+  padding-bottom: 0.85rem;
+  margin-bottom: 0.25rem;
+  border-bottom: 2px solid ${({ theme }) => theme.colors.sage};
+`;
+
+export const EditFormTitle = styled.h4`
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.text};
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  .material-symbols-outlined {
+    font-size: 1.1rem;
+    color: ${({ theme }) => theme.colors.periwinkle};
+  }
+`;
+
+export const EditFormSubtitle = styled.p`
+  margin: 0;
+  font-size: 0.82rem;
+  color: ${({ theme }) => theme.colors.textMuted};
+`;
+
+export const EditFieldGroup = styled.div``;
+
+export const WordCount = styled.p`
+  margin: 0.35rem 0 0;
+  font-size: 0.78rem;
+  color: ${({ theme }) => theme.colors.textMuted};
+  text-align: right;
+`;
+
 export const FieldLabel = styled.label`
-  display: block;
-  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
   font-weight: 600;
   color: ${({ theme }) => theme.colors.text};
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.4rem;
+
+  .material-symbols-outlined {
+    font-size: 0.95rem;
+    color: ${({ theme }) => theme.colors.periwinkle};
+  }
 `;
 
 export const FieldInput = styled.input`
   width: 100%;
   box-sizing: border-box;
-  padding: 0.7rem 0.85rem;
+  padding: 0.8rem 0.95rem;
   border: 2px solid ${({ theme }) => theme.colors.sage};
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 0.95rem;
   font-family: inherit;
   color: ${({ theme }) => theme.colors.text};
@@ -389,6 +432,11 @@ export const FieldInput = styled.input`
     border-color 0.2s ease,
     box-shadow 0.2s ease,
     background 0.2s ease;
+
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.textMuted};
+    opacity: 0.75;
+  }
 
   &:focus {
     outline: none;
@@ -401,20 +449,26 @@ export const FieldInput = styled.input`
 export const FieldTextarea = styled.textarea`
   width: 100%;
   box-sizing: border-box;
-  min-height: 100px;
-  max-height: 140px;
-  padding: 0.7rem 0.85rem;
+  min-height: 110px;
+  max-height: 150px;
+  padding: 0.8rem 0.95rem;
   border: 2px solid ${({ theme }) => theme.colors.sage};
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 0.95rem;
   font-family: inherit;
   color: ${({ theme }) => theme.colors.text};
   background: ${({ theme }) => theme.colors.inputBg};
   resize: vertical;
+  line-height: 1.5;
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease,
     background 0.2s ease;
+
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.textMuted};
+    opacity: 0.75;
+  }
 
   &:focus {
     outline: none;

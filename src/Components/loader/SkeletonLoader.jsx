@@ -21,9 +21,11 @@ const fadeIn = keyframes`
 
 const SkeletonGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
+  gap: 1.5rem;
   width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
   padding: 0.5rem 0;
   animation: ${fadeIn} 0.35s ease forwards;
 `;
