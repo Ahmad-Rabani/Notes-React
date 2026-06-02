@@ -206,3 +206,136 @@ export const DndHint = styled.p`
   text-align: center;
   animation: ${fadeIn} 0.5s ease 0.15s both;
 `;
+
+export const SearchBarWrapper = styled.div`
+  width: 100%;
+  max-width: 1600px;
+  margin: -1rem auto 1.75rem;
+  animation: ${fadeIn} 0.5s ease 0.08s both;
+`;
+
+export const SearchFieldRow = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+export const SearchIcon = styled.span`
+  position: absolute;
+  left: 1.1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.25rem;
+  color: ${({ theme }) => theme.colors.primary};
+  pointer-events: none;
+`;
+
+export const SearchInput = styled.input`
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.95rem 7.5rem 0.95rem 3rem;
+  border: 2px solid ${({ theme }) => theme.colors.cardBorder};
+  border-radius: 16px;
+  font-size: 1rem;
+  font-family: inherit;
+  color: ${({ theme }) => theme.colors.text};
+  background: ${({ theme }) => theme.colors.surface};
+  box-shadow: ${({ theme }) => theme.colors.cardShadow};
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.3s ease;
+
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.textMuted};
+    opacity: 0.8;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.colors.primary};
+    box-shadow:
+      ${({ theme }) => theme.colors.cardHoverShadow},
+      0 0 0 3px ${({ theme }) => theme.colors.focusRing};
+  }
+`;
+
+export const SearchClearButton = styled.button`
+  position: absolute;
+  right: 4.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: ${({ theme }) => theme.colors.paleBlue};
+  color: ${({ theme }) => theme.colors.textMuted};
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+
+  .material-symbols-outlined {
+    font-size: 1rem;
+  }
+
+  &:hover {
+    transform: translateY(-50%) scale(1.08);
+    background: ${({ theme }) => theme.colors.primary};
+    color: #fff;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.primary};
+    outline-offset: 2px;
+  }
+`;
+
+export const SearchHint = styled.div`
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.25rem 0.45rem;
+  border-radius: 8px;
+  border: 1px solid ${({ theme }) => theme.colors.cardBorder};
+  background: ${({ theme }) => theme.colors.inputBg};
+  color: ${({ theme }) => theme.colors.textMuted};
+  font-size: 0.72rem;
+  font-weight: 600;
+  pointer-events: none;
+
+  kbd {
+    font-family: inherit;
+    font-size: inherit;
+  }
+
+  @media (max-width: 640px) {
+    display: none;
+  }
+`;
+
+export const SearchResultsBanner = styled.p`
+  margin: 0.65rem 0 0;
+  padding: 0.55rem 0.85rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.text};
+  background: ${({ theme }) => theme.colors.paleBlue};
+  border: 1px solid ${({ theme }) => theme.colors.cardBorder};
+`;
+
+export const SearchMeta = styled.p`
+  margin: 0.55rem 0 0 0.15rem;
+  font-size: 0.82rem;
+  color: ${({ theme }) => theme.colors.textMuted};
+`;

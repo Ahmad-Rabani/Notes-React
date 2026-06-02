@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
@@ -8,6 +8,9 @@ import Create from "../card/CreateCard";
 import ShowCard from "../Show Card/Card";
 import SortableNotesList from "../Show Card/SortableNotesList";
 import SkeletonLoader from "../loader/SkeletonLoader";
+import NoteSearchBar from "./NoteSearchBar";
+import useDebouncedValue from "./useDebouncedValue";
+import { filterNotes } from "../utils/noteSearch";
 import {
   CardsGrid,
   DndHint,
@@ -34,9 +37,20 @@ const Main = () => {
   const [isCreateModal, setModel] = useState(false);
   const [currentUserUid, setCurrentUserUid] = useState(null);
   const [enteringIds, setEnteringIds] = useState(new Set());
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const searchInputRef = useRef(null);
+  const debouncedSearch = useDebouncedValue(searchQuery, 200);
 
   const prevIdsRef = useRef(new Set());
   const isInitialLoad = useRef(true);
+
+  const filteredNotes = useMemo(
+    () => filterNotes(data, debouncedSearch),
+    [data, debouncedSearch]
+  );
+
+  const isSearchActive = debouncedSearch.trim().length > 0;
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -81,6 +95,28 @@ const Main = () => {
     prevIdsRef.current = currentIds;
   }, [data, status]);
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      const isMac = navigator.platform.toUpperCase().includes("MAC");
+      const modKey = isMac ? event.metaKey : event.ctrlKey;
+
+      if (modKey && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        searchInputRef.current?.focus();
+        searchInputRef.current?.select();
+        return;
+      }
+
+      if (event.key === "Escape" && searchQuery) {
+        setSearchQuery("");
+        searchInputRef.current?.blur();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [searchQuery]);
+
   const openCreateModal = () => {
     setModalKey((key) => key + 1);
     setModel(true);
@@ -111,15 +147,29 @@ const Main = () => {
       );
     }
 
-    if (isStared) {
+    if (isSearchActive && filteredNotes.length === 0) {
       return (
         <CardsGrid aria-live="polite">
-          {data.map((item) => (
+          <EmptyState>
+            No notes match &ldquo;{debouncedSearch.trim()}&rdquo;. Try a different
+            keyword or clear the search.
+          </EmptyState>
+        </CardsGrid>
+      );
+    }
+
+    const notesToRender = isSearchActive ? filteredNotes : data;
+
+    if (isStared || isSearchActive) {
+      return (
+        <CardsGrid aria-live="polite">
+          {notesToRender.map((item) => (
             <ShowCard
               key={item.id}
               data={item}
               userUid={currentUserUid}
               isEntering={enteringIds.has(item.id)}
+              searchQuery={debouncedSearch}
             />
           ))}
         </CardsGrid>
@@ -130,9 +180,10 @@ const Main = () => {
       <>
         <DndHint>Hold and drag a card to reorder your notes</DndHint>
         <SortableNotesList
-          data={data}
+          data={notesToRender}
           userUid={currentUserUid}
           enteringIds={enteringIds}
+          searchQuery={debouncedSearch}
         />
       </>
     );
@@ -164,6 +215,21 @@ const Main = () => {
           </LogoutButton>
         </FilterGroup>
       </Header>
+
+      {!showSkeleton && data.length > 0 && (
+        <NoteSearchBar
+          ref={searchInputRef}
+          value={searchQuery}
+          onChange={setSearchQuery}
+          resultCount={filteredNotes.length}
+          totalCount={data.length}
+          isActive={isSearchActive}
+        />
+      )}
+
+      {isSearchActive && !showSkeleton && (
+        <DndHint>Search is active — clear it to drag and reorder notes</DndHint>
+      )}
 
       {isCreateModal && (
         <Create

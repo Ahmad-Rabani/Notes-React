@@ -239,6 +239,14 @@ export const CardDate = styled.time`
   opacity: 0.85;
 `;
 
+export const HighlightMark = styled.mark`
+  background: rgba(63, 114, 175, 0.22);
+  color: inherit;
+  padding: 0 0.12em;
+  border-radius: 3px;
+  font-weight: inherit;
+`;
+
 export const CardActions = styled.div`
   display: flex;
   align-items: center;

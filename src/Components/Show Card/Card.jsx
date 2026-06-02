@@ -4,6 +4,7 @@ import { deleteNote, toggleStar } from "./_redux/ShowCardSlice";
 import { saveNote } from "../card/_redux/CardSlice";
 import { SmLoader } from "../loader/Loading";
 import AnimatedCard from "./AnimatedCard";
+import HighlightText from "../utils/HighlightText";
 import {
   ActionButton,
   CardActions,
@@ -39,6 +40,7 @@ const ShowCard = ({
   isExiting = false,
   onExitComplete,
   dragProps = null,
+  searchQuery = "",
 }) => {
   const dispatch = useDispatch();
   const { status: saveStatus } = useSelector((state) => state.model);
@@ -178,10 +180,16 @@ const ShowCard = ({
         {!isEditing ? (
           <ViewContent>
             <CardHeader>
-              <CardTitle>{data.name}</CardTitle>
+              <CardTitle>
+                <HighlightText text={data.name} query={searchQuery} />
+              </CardTitle>
             </CardHeader>
-            <CardDescription>{data.description}</CardDescription>
-            <CardDate dateTime={data.date}>{data.date}</CardDate>
+            <CardDescription>
+              <HighlightText text={data.description} query={searchQuery} />
+            </CardDescription>
+            <CardDate dateTime={data.date}>
+              <HighlightText text={data.date} query={searchQuery} />
+            </CardDate>
 
             <CardActions className="card-actions">
               <IconButton

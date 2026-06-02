@@ -51,6 +51,7 @@ const SortableNotesList = ({
   userUid,
   enteringIds,
   disabled = false,
+  searchQuery = "",
 }) => {
   const dispatch = useDispatch();
   const [items, setItems] = useState(() => data.map((note) => note.id));
@@ -124,6 +125,7 @@ const SortableNotesList = ({
                     userUid={userUid}
                     isEntering={enteringIds.has(note.id)}
                     dragProps={disabled ? null : dragProps}
+                    searchQuery={searchQuery}
                   />
                 )}
               </SortableNoteWrapper>
