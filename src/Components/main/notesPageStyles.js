@@ -74,7 +74,7 @@ export const FilterButton = styled.button`
   cursor: pointer;
   box-shadow: ${({ $active, theme }) =>
     $active
-      ? "0 4px 14px rgba(173, 178, 212, 0.45)"
+      ? "0 4px 14px rgba(63, 114, 175, 0.4)"
       : theme.colors.cardShadow};
   transition:
     transform 0.2s cubic-bezier(0.34, 1.2, 0.64, 1),
@@ -86,8 +86,8 @@ export const FilterButton = styled.button`
   &:hover {
     transform: translateY(-1px);
     background: ${({ $active, theme }) =>
-      $active ? "#9ba0c8" : theme.colors.sage};
-    box-shadow: 0 6px 16px rgba(173, 178, 212, 0.4);
+      $active ? theme.colors.primaryHover : theme.colors.paleBlue};
+    box-shadow: 0 6px 16px rgba(63, 114, 175, 0.35);
   }
 
   &:active {

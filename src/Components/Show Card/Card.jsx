@@ -12,7 +12,6 @@ import {
   CardHeader,
   CardTitle,
   CloseButton,
-  DragHandle,
   EditActions,
   EditFieldGroup,
   EditForm,
@@ -29,13 +28,17 @@ import {
   WordCount,
 } from "./noteCardStyles";
 
+const stopDrag = (e) => {
+  e.stopPropagation();
+};
+
 const ShowCard = ({
   data,
   userUid,
   isEntering = false,
   isExiting = false,
   onExitComplete,
-  dragHandleProps = null,
+  dragProps = null,
 }) => {
   const dispatch = useDispatch();
   const { status: saveStatus } = useSelector((state) => state.model);
@@ -54,6 +57,9 @@ const ShowCard = ({
   const [savedPulse, setSavedPulse] = useState(false);
 
   const nameRef = useRef(null);
+
+  const isDraggable = Boolean(dragProps && !isEditing);
+  const isDragging = dragProps?.isDragging ?? false;
 
   useEffect(() => {
     if (isEditing && nameRef.current) {
@@ -129,8 +135,6 @@ const ShowCard = ({
     });
   };
 
-  const isDragging = dragHandleProps?.isDragging ?? false;
-
   return (
     <AnimatedCard
       isEntering={isEntering}
@@ -141,24 +145,19 @@ const ShowCard = ({
         $isEditing={isEditing}
         $savedPulse={savedPulse}
         $isDragging={isDragging}
+        $isDraggable={isDraggable}
         data-dragging={isDragging ? "true" : undefined}
+        data-editing={isEditing ? "true" : undefined}
         aria-label={`Note: ${data.name}`}
+        {...(isDraggable ? dragProps.listeners : {})}
+        {...(isDraggable ? dragProps.attributes : {})}
       >
-        {dragHandleProps && !isEditing && (
-          <DragHandle
-            type="button"
-            aria-label={`Drag to reorder ${data.name}`}
-            {...dragHandleProps.listeners}
-          >
-            <span className="material-symbols-outlined">drag_indicator</span>
-          </DragHandle>
-        )}
-
         {!isEditing && (
           <CloseButton
             type="button"
             $pulse={deletePulse}
             onClick={handleDelete}
+            onPointerDown={stopDrag}
             disabled={isDeleting}
             aria-label={`Delete note ${data.name}`}
           >
@@ -188,6 +187,7 @@ const ShowCard = ({
               <IconButton
                 type="button"
                 onClick={handleEditOpen}
+                onPointerDown={stopDrag}
                 aria-label={`Edit note ${data.name}`}
               >
                 <span className="material-symbols-outlined">edit</span>
@@ -196,6 +196,7 @@ const ShowCard = ({
                 type="button"
                 $active={data.stared}
                 onClick={handleStar}
+                onPointerDown={stopDrag}
                 disabled={isStarLoading}
                 aria-label={data.stared ? "Unstar note" : "Star note"}
                 aria-pressed={data.stared}
@@ -209,7 +210,7 @@ const ShowCard = ({
             </CardActions>
           </ViewContent>
         ) : (
-          <EditForm onSubmit={handleEditSubmit}>
+          <EditForm onSubmit={handleEditSubmit} onPointerDown={stopDrag}>
             <EditFormHeader>
               <EditFormTitle>
                 <span className="material-symbols-outlined">edit_note</span>

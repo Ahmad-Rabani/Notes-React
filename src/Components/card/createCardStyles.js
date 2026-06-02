@@ -158,7 +158,7 @@ export const FieldInput = styled.input`
     outline: none;
     border-color: ${({ theme }) => theme.colors.periwinkle};
     background: ${({ theme }) => theme.colors.surface};
-    box-shadow: 0 0 0 3px rgba(173, 178, 212, 0.35);
+    box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.focusRing};
   }
 `;
 
@@ -190,7 +190,7 @@ export const FieldTextarea = styled.textarea`
     outline: none;
     border-color: ${({ theme }) => theme.colors.periwinkle};
     background: ${({ theme }) => theme.colors.surface};
-    box-shadow: 0 0 0 3px rgba(173, 178, 212, 0.35);
+    box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.focusRing};
   }
 `;
 
@@ -234,9 +234,9 @@ export const ModalButton = styled.button`
     color: #fff;
 
     &:hover:not(:disabled) {
-      background: #9ba0c8;
+      background: ${theme.colors.primaryHover};
       transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(173, 178, 212, 0.45);
+      box-shadow: 0 6px 16px rgba(63, 114, 175, 0.4);
     }
   `
       : `

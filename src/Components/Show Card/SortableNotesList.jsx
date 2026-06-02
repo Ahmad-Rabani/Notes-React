@@ -35,13 +35,13 @@ const SortableNoteWrapper = ({ id, children, disabled }) => {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition: transition || "transform 0.25s cubic-bezier(0.34, 1.2, 0.64, 1)",
-    opacity: isDragging ? 0.35 : 1,
+    opacity: isDragging ? 0.4 : 1,
     touchAction: "none",
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes}>
-      {children({ listeners, isDragging })}
+    <div ref={setNodeRef} style={style}>
+      {children({ listeners, attributes, isDragging })}
     </div>
   );
 };
@@ -62,7 +62,7 @@ const SortableNotesList = ({
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: { distance: 8 },
+      activationConstraint: { distance: 10 },
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
@@ -94,7 +94,7 @@ const SortableNotesList = ({
       setItems(newItems);
 
       const reordered = newItems
-        .map((id) => data.find((note) => note.id === id))
+        .map((noteId) => data.find((note) => note.id === noteId))
         .filter(Boolean);
 
       dispatch(setNotesOrderOptimistic(reordered));
@@ -123,7 +123,7 @@ const SortableNotesList = ({
                     data={note}
                     userUid={userUid}
                     isEntering={enteringIds.has(note.id)}
-                    dragHandleProps={disabled ? null : dragProps}
+                    dragProps={disabled ? null : dragProps}
                   />
                 )}
               </SortableNoteWrapper>

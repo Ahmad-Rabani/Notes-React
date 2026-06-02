@@ -11,7 +11,8 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     margin: 0;
-    background-color: ${({ theme }) => (theme.mode === "dark" ? "#1a1a2e" : "#EEF1DA")};
+    background-color: ${({ theme }) =>
+      theme.mode === "dark" ? theme.colors.navy : theme.colors.snow};
     color: ${({ theme }) => theme.colors.text};
     transition:
       background-color 0.3s ease,

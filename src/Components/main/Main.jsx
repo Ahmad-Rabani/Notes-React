@@ -128,7 +128,7 @@ const Main = () => {
 
     return (
       <>
-        <DndHint>Drag the grip handle to reorder your notes</DndHint>
+        <DndHint>Hold and drag a card to reorder your notes</DndHint>
         <SortableNotesList
           data={data}
           userUid={currentUserUid}

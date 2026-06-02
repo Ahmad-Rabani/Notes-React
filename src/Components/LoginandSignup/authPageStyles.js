@@ -181,7 +181,7 @@ export const GhostButton = styled.button`
     color: ${({ theme }) => theme.colors.text};
 
     &:hover {
-      background: rgba(173, 178, 212, 0.25);
+      background: rgba(63, 114, 175, 0.2);
     }
   }
 `;
@@ -242,7 +242,7 @@ export const Input = styled.input`
     outline: none;
     border-color: ${({ theme }) => theme.colors.periwinkle};
     background: ${({ theme }) => theme.colors.surface};
-    box-shadow: 0 0 0 3px rgba(173, 178, 212, 0.4);
+    box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.focusRing};
   }
 
   &:disabled {
@@ -277,9 +277,9 @@ export const PrimaryButton = styled.button`
     opacity 0.2s ease;
 
   &:hover:not(:disabled) {
-    background: #9ba0c8;
+    background: ${({ theme }) => theme.colors.primaryHover};
     transform: translateY(-1px);
-    box-shadow: 0 8px 18px rgba(173, 178, 212, 0.5);
+    box-shadow: 0 8px 18px rgba(63, 114, 175, 0.45);
   }
 
   &:active:not(:disabled) {

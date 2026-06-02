@@ -3,18 +3,18 @@ import styled, { css, keyframes } from "styled-components";
 const savePulse = keyframes`
   0% {
     box-shadow:
-      0 4px 16px rgba(58, 61, 74, 0.08),
-      0 0 0 0 rgba(213, 229, 213, 0.9);
+      0 4px 16px rgba(17, 45, 78, 0.08),
+      0 0 0 0 rgba(63, 114, 175, 0.55);
   }
   50% {
     box-shadow:
-      0 8px 24px rgba(58, 61, 74, 0.1),
-      0 0 0 10px rgba(213, 229, 213, 0);
+      0 8px 24px rgba(17, 45, 78, 0.1),
+      0 0 0 10px rgba(63, 114, 175, 0);
   }
   100% {
     box-shadow:
-      0 4px 16px rgba(58, 61, 74, 0.08),
-      0 0 0 0 rgba(213, 229, 213, 0);
+      0 4px 16px rgba(17, 45, 78, 0.08),
+      0 0 0 0 rgba(63, 114, 175, 0);
   }
 `;
 
@@ -53,12 +53,15 @@ export const NoteCard = styled.article`
   width: 100%;
   min-height: 260px;
   padding: 1.5rem;
-  padding-top: 2.75rem;
+  padding-top: 2.25rem;
   border-radius: 18px;
   background: ${({ theme }) => theme.colors.cardBg};
   border: 1px solid ${({ theme }) => theme.colors.cardBorder};
   box-shadow: ${({ theme }) => theme.colors.cardShadow};
   font-family: "Barlow", sans-serif;
+  touch-action: ${({ $isDraggable }) => ($isDraggable ? "none" : "auto")};
+  cursor: ${({ $isDraggable, $isDragging }) =>
+    $isDraggable ? ($isDragging ? "grabbing" : "grab") : "default"};
   transition:
     transform 0.35s cubic-bezier(0.34, 1.2, 0.64, 1),
     box-shadow 0.35s ease,
@@ -73,14 +76,15 @@ export const NoteCard = styled.article`
       box-shadow: ${({ theme }) => theme.colors.dragOverlayShadow};
     `}
 
-  ${({ $isEditing }) =>
+  ${({ $isEditing, theme }) =>
     $isEditing &&
     css`
       min-height: 420px;
-      border-color: ${({ theme }) => theme.colors.sage};
+      border-color: ${theme.colors.primary};
       box-shadow:
-        0 12px 32px rgba(173, 178, 212, 0.35),
-        0 0 0 3px rgba(213, 229, 213, 0.4);
+        0 12px 32px rgba(17, 45, 78, 0.12),
+        0 0 0 3px ${theme.colors.focusRing};
+      cursor: default;
     `}
 
   ${({ $savedPulse }) =>
@@ -89,7 +93,7 @@ export const NoteCard = styled.article`
       animation: ${savePulse} 0.65s ease;
     `}
 
-  &:hover:not([data-dragging="true"]) {
+  &:hover:not([data-dragging="true"]):not([data-editing="true"]) {
     transform: translateY(-4px);
     box-shadow: ${({ theme }) => theme.colors.cardHoverShadow};
 
@@ -99,7 +103,7 @@ export const NoteCard = styled.article`
   }
 
   &:focus-within {
-    outline: 2px solid ${({ theme }) => theme.colors.periwinkle};
+    outline: 2px solid ${({ theme }) => theme.colors.primary};
     outline-offset: 3px;
   }
 `;
@@ -159,59 +163,13 @@ export const CloseButton = styled.button`
   }
 `;
 
-export const DragHandle = styled.button`
-  position: absolute;
-  top: 0.65rem;
-  left: 0.65rem;
-  z-index: 3;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border: none;
-  border-radius: 8px;
-  background: ${({ theme }) => theme.colors.sage};
-  color: ${({ theme }) => theme.colors.text};
-  cursor: grab;
-  touch-action: none;
-  transition:
-    transform 0.2s ease,
-    background 0.2s ease,
-    box-shadow 0.2s ease;
-
-  .material-symbols-outlined {
-    font-size: 1.1rem;
-    line-height: 1;
-  }
-
-  &:hover {
-    transform: scale(1.08);
-    background: ${({ theme }) => theme.colors.periwinkle};
-    color: #fff;
-    box-shadow: 0 4px 10px rgba(173, 178, 212, 0.4);
-  }
-
-  &:active {
-    cursor: grabbing;
-    transform: scale(0.95);
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.periwinkle};
-    outline-offset: 2px;
-  }
-`;
-
 export const DragOverlayCard = styled.div`
   width: min(360px, 90vw);
   min-height: 220px;
   padding: 1.5rem;
-  padding-top: 2.5rem;
   border-radius: 18px;
   background: ${({ theme }) => theme.colors.cardBg};
-  border: 2px solid ${({ theme }) => theme.colors.sage};
+  border: 2px solid ${({ theme }) => theme.colors.primary};
   box-shadow: ${({ theme }) => theme.colors.dragOverlayShadow};
   transform: scale(1.05) rotate(1deg);
   cursor: grabbing;
@@ -322,7 +280,7 @@ export const IconButton = styled.button`
     transform: scale(1.1);
     background: ${({ theme }) => theme.colors.periwinkle};
     color: #fff;
-    box-shadow: 0 4px 12px rgba(173, 178, 212, 0.45);
+    box-shadow: 0 4px 12px rgba(63, 114, 175, 0.4);
   }
 
   &:active:not(:disabled) {
@@ -339,12 +297,12 @@ export const IconButton = styled.button`
     cursor: not-allowed;
   }
 
-  ${({ $active }) =>
+  ${({ $active, theme }) =>
     $active &&
     css`
-      background: ${({ theme }) => theme.colors.cream};
-      color: #c9a227;
-      box-shadow: inset 0 0 0 2px rgba(201, 162, 39, 0.35);
+      background: ${theme.colors.paleBlue};
+      color: ${theme.colors.star};
+      box-shadow: inset 0 0 0 2px rgba(230, 168, 23, 0.35);
     `}
 `;
 
@@ -442,7 +400,7 @@ export const FieldInput = styled.input`
     outline: none;
     border-color: ${({ theme }) => theme.colors.periwinkle};
     background: ${({ theme }) => theme.colors.surface};
-    box-shadow: 0 0 0 3px rgba(173, 178, 212, 0.35);
+    box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.focusRing};
   }
 `;
 
@@ -474,7 +432,7 @@ export const FieldTextarea = styled.textarea`
     outline: none;
     border-color: ${({ theme }) => theme.colors.periwinkle};
     background: ${({ theme }) => theme.colors.surface};
-    box-shadow: 0 0 0 3px rgba(173, 178, 212, 0.35);
+    box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.focusRing};
   }
 `;
 
@@ -506,9 +464,9 @@ export const ActionButton = styled.button`
           color: #fff;
 
           &:hover:not(:disabled) {
-            background: #9ba0c8;
+            background: ${theme.colors.primaryHover};
             transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(173, 178, 212, 0.45);
+            box-shadow: 0 6px 16px rgba(63, 114, 175, 0.4);
           }
         `
       : css`
