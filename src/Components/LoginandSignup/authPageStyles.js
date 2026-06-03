@@ -4,15 +4,37 @@ import { lightTheme } from "../../theme/themes";
 export const COLORS = lightTheme.colors;
 
 export const PageWrapper = styled.div`
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100vw;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  padding-top: 4.5rem;
+  padding-top: calc(4.5rem + env(safe-area-inset-top, 0px));
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
+  padding-left: max(1.5rem, env(safe-area-inset-left, 0px));
+  padding-right: max(1.5rem, env(safe-area-inset-right, 0px));
+  overflow-x: hidden;
   background: ${({ theme }) => theme.colors.authGradient};
   font-family: "Barlow", sans-serif;
   transition: background 0.3s ease;
+
+  @media (max-width: 900px) {
+    align-items: flex-start;
+    padding-top: calc(4rem + env(safe-area-inset-top, 0px));
+    padding-left: max(1rem, env(safe-area-inset-left, 0px));
+    padding-right: max(1rem, env(safe-area-inset-right, 0px));
+  }
+
+  @media (max-width: 480px) {
+    padding-top: calc(3.75rem + env(safe-area-inset-top, 0px));
+    padding-left: max(0.75rem, env(safe-area-inset-left, 0px));
+    padding-right: max(0.75rem, env(safe-area-inset-right, 0px));
+    padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+  }
 `;
 
 export const AuthCard = styled.div`
@@ -27,9 +49,13 @@ export const AuthCard = styled.div`
   flex-direction: column;
   transition: background 0.3s ease, box-shadow 0.3s ease;
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     min-height: auto;
     border-radius: 20px;
+  }
+
+  @media (max-width: 480px) {
+    border-radius: 16px;
   }
 `;
 
@@ -38,7 +64,7 @@ export const CardInner = styled.div`
   flex: 1;
   min-height: 540px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     flex-direction: column;
     min-height: auto;
   }
@@ -51,8 +77,9 @@ export const FormSection = styled.div`
   z-index: 2;
   background: ${({ theme }) => theme.colors.surface};
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     width: 100%;
+    flex-shrink: 0;
   }
 `;
 
@@ -63,21 +90,38 @@ export const FormsSlider = styled.div`
   transform: translateX(${({ $isSignup }) => ($isSignup ? "0" : "-50%")});
   transition: transform 0.65s cubic-bezier(0.65, 0, 0.35, 1);
   will-change: transform;
+
+  @media (max-width: 900px) {
+    width: 100%;
+    height: auto;
+    transform: none;
+    transition: none;
+    will-change: auto;
+  }
 `;
 
 export const FormPanel = styled.div`
   width: 50%;
-  padding: 3rem 3.25rem;
+  padding: clamp(1.75rem, 4vw, 3rem) clamp(1.5rem, 4vw, 3.25rem);
   display: flex;
   flex-direction: column;
   justify-content: center;
   background: ${({ theme }) => theme.colors.surface};
   transition: background 0.3s ease;
+  box-sizing: border-box;
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     width: 100%;
     padding: 2rem 1.75rem;
     display: ${({ $mobileHidden }) => ($mobileHidden ? "none" : "flex")};
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.5rem 1.25rem;
+  }
+
+  @media (max-width: 360px) {
+    padding: 1.25rem 1rem;
   }
 `;
 
@@ -95,7 +139,7 @@ export const OverlaySection = styled.div`
   position: relative;
   z-index: 3;
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     display: none;
   }
 `;
@@ -111,13 +155,14 @@ export const OverlaySlider = styled.div`
 
 export const OverlayPanel = styled.div`
   width: 50%;
-  padding: 3rem;
+  padding: clamp(1.5rem, 4vw, 3rem);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   color: #fff;
+  box-sizing: border-box;
   background: linear-gradient(
     155deg,
     ${({ theme }) => theme.colors.periwinkle} 0%,
@@ -136,7 +181,7 @@ export const OverlayPanel = styled.div`
 `;
 
 export const OverlayTitle = styled.h2`
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 4vw, 2rem);
   font-weight: 700;
   margin: 0 0 0.75rem;
   letter-spacing: -0.02em;
@@ -187,7 +232,7 @@ export const GhostButton = styled.button`
 `;
 
 export const FormTitle = styled.h1`
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 5vw, 2rem);
   font-weight: 700;
   color: ${({ theme }) => theme.colors.text};
   margin: 0 0 0.35rem;
@@ -196,16 +241,24 @@ export const FormTitle = styled.h1`
 `;
 
 export const FormSubtitle = styled.p`
-  font-size: 0.95rem;
+  font-size: clamp(0.875rem, 2.5vw, 0.95rem);
   color: ${({ theme }) => theme.colors.textMuted};
   margin: 0 0 2rem;
   transition: color 0.3s ease;
+
+  @media (max-width: 480px) {
+    margin-bottom: 1.5rem;
+  }
 `;
 
 export const FieldGroup = styled.div`
   width: 100%;
   margin-bottom: 1.25rem;
   box-sizing: border-box;
+
+  @media (max-width: 480px) {
+    margin-bottom: 1rem;
+  }
 `;
 
 export const Label = styled.label`
@@ -219,6 +272,7 @@ export const Label = styled.label`
 export const Input = styled.input`
   display: block;
   width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
   padding: 0.9rem 1rem;
   border: 2px solid ${({ theme }) => theme.colors.sage};
@@ -253,6 +307,11 @@ export const Input = styled.input`
   &[aria-invalid="true"] {
     border-color: ${({ theme }) => theme.colors.error};
     box-shadow: 0 0 0 3px rgba(139, 64, 73, 0.15);
+  }
+
+  @media (max-width: 900px) {
+    font-size: 16px;
+    padding: 0.85rem 0.9rem;
   }
 `;
 
@@ -312,6 +371,7 @@ export const ErrorMessage = styled.p`
 export const MobileToggle = styled.div`
   display: none;
   padding: 1.25rem 1.75rem 2rem;
+  padding-bottom: max(2rem, env(safe-area-inset-bottom, 0px));
   text-align: center;
   background: linear-gradient(
     160deg,
@@ -320,19 +380,26 @@ export const MobileToggle = styled.div`
   );
   color: #fff;
   transition: background 0.3s ease;
+  box-sizing: border-box;
 
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     display: block;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1rem 1.25rem 1.5rem;
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
   }
 
   p {
     margin: 0 0 0.75rem;
-    font-size: 0.9rem;
+    font-size: clamp(0.85rem, 2.5vw, 0.9rem);
   }
 
   ${GhostButton} {
     border-color: #fff;
     color: #fff;
+    max-width: 100%;
 
     &:hover {
       background: rgba(255, 255, 255, 0.15);
@@ -346,7 +413,7 @@ export const BrandMark = styled.div`
   gap: 0.5rem;
   margin-bottom: 1.5rem;
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 3vw, 1.1rem);
   color: ${({ theme }) => theme.colors.periwinkle};
   letter-spacing: 0.02em;
 
@@ -357,5 +424,14 @@ export const BrandMark = styled.div`
     background: ${({ theme }) => theme.colors.sage};
     box-shadow: 12px 0 0 ${({ theme }) => theme.colors.mist},
       24px 0 0 ${({ theme }) => theme.colors.periwinkle};
+  }
+
+  @media (max-width: 480px) {
+    margin-bottom: 1.25rem;
+
+    span {
+      box-shadow: 10px 0 0 ${({ theme }) => theme.colors.mist},
+        20px 0 0 ${({ theme }) => theme.colors.periwinkle};
+    }
   }
 `;
