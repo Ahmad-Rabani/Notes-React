@@ -38,7 +38,7 @@ const SortableNoteWrapper = ({ id, children, disabled }) => {
     transform: CSS.Transform.toString(transform),
     transition: transition || "transform 0.25s cubic-bezier(0.34, 1.2, 0.64, 1)",
     opacity: isDragging ? 0.4 : 1,
-    touchAction: "none",
+    touchAction: "auto",
   };
 
   return (
@@ -59,14 +59,30 @@ const SortableNotesList = ({
   const { isDark } = useTheme();
   const [items, setItems] = useState(() => data.map((note) => note.id));
   const [activeId, setActiveId] = useState(null);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   useEffect(() => {
     setItems(data.map((note) => note.id));
   }, [data]);
 
+  useEffect(() => {
+    const media = window.matchMedia?.("(pointer: coarse)");
+    if (!media) {
+      setIsTouchDevice(false);
+      return;
+    }
+
+    const updateTouch = () => setIsTouchDevice(media.matches);
+    updateTouch();
+    media.addEventListener?.("change", updateTouch);
+    return () => media.removeEventListener?.("change", updateTouch);
+  }, []);
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: { distance: 10 },
+      activationConstraint: isTouchDevice
+        ? { delay: 180, tolerance: 3 }
+        : { distance: 10 },
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,

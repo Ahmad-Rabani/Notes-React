@@ -60,9 +60,8 @@ export const NoteCard = styled.article`
     $surfaceBorder || theme.colors.cardBorder};
   box-shadow: ${({ theme }) => theme.colors.cardShadow};
   font-family: "Barlow", sans-serif;
-  touch-action: ${({ $isDraggable }) => ($isDraggable ? "none" : "auto")};
-  cursor: ${({ $isDraggable, $isDragging }) =>
-    $isDraggable ? ($isDragging ? "grabbing" : "grab") : "default"};
+  touch-action: auto;
+  cursor: default;
   transition:
     transform 0.35s cubic-bezier(0.34, 1.2, 0.64, 1),
     box-shadow 0.35s ease,
@@ -315,6 +314,29 @@ export const IconButton = styled.button`
       color: ${theme.colors.star};
       box-shadow: inset 0 0 0 2px rgba(230, 168, 23, 0.35);
     `}
+`;
+
+export const DragHandle = styled(IconButton)`
+  background: ${({ theme }) => theme.colors.surface};
+  color: ${({ theme }) => theme.colors.textMuted};
+  box-shadow: inset 0 0 0 1px rgba(132, 147, 166, 0.14);
+  cursor: grab;
+  touch-action: none;
+
+  .material-symbols-outlined {
+    font-size: 1rem;
+  }
+
+  &:hover:not(:disabled) {
+    transform: scale(1.05);
+    background: ${({ theme }) => theme.colors.inputBg};
+    color: ${({ theme }) => theme.colors.text};
+  }
+
+  &:active:not(:disabled) {
+    cursor: grabbing;
+    transform: scale(0.98);
+  }
 `;
 
 export const EditForm = styled.form`

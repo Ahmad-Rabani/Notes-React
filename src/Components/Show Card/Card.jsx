@@ -23,6 +23,7 @@ import {
   CardHeader,
   CardTitle,
   CloseButton,
+  DragHandle,
   EditActions,
   EditFieldGroup,
   EditForm,
@@ -201,8 +202,6 @@ const ShowCard = ({
         data-dragging={isDragging ? "true" : undefined}
         data-editing={isEditing ? "true" : undefined}
         aria-label={`Note: ${data.name}`}
-        {...(isDraggable ? dragProps.listeners : {})}
-        {...(isDraggable ? dragProps.attributes : {})}
       >
         {!isEditing && (
           <CloseButton
@@ -258,6 +257,16 @@ const ShowCard = ({
                 onToggle={setColorPickerOpen}
                 isSaving={isColorSaving}
               />
+              {isDraggable && dragProps ? (
+                <DragHandle
+                  type="button"
+                  aria-label={`Drag note ${data.name}`}
+                  {...dragProps.attributes}
+                  {...dragProps.listeners}
+                >
+                  <span className="material-symbols-outlined">drag_indicator</span>
+                </DragHandle>
+              ) : null}
               <IconButton
                 type="button"
                 onClick={handleEditOpen}
