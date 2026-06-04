@@ -41,6 +41,7 @@ export const TagInputWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
+  width: 100%;
 `;
 
 export const TagInputLabel = styled.label`
@@ -51,18 +52,25 @@ export const TagInputLabel = styled.label`
 
 export const TagInputField = styled.input`
   width: 100%;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 2px solid ${(props) => props.theme.colors.cardBorder};
+  box-sizing: border-box;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  border: 2px solid ${(props) => props.theme.colors.sage};
   background-color: ${(props) => props.theme.colors.inputBg};
   color: ${(props) => props.theme.colors.text};
-  font-size: 14px;
-  transition: all 0.15s ease;
+  font-size: 0.95rem;
+  cursor: text;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.3s ease,
+    color 0.3s ease;
   font-family: inherit;
 
   &:focus {
     outline: none;
-    border-color: ${(props) => props.theme.colors.primary};
+    border-color: ${(props) => props.theme.colors.periwinkle};
+    background: ${(props) => props.theme.colors.surface};
     box-shadow: 0 0 0 3px ${(props) => props.theme.colors.focusRing};
   }
 
@@ -107,10 +115,12 @@ export const TagsDisplayContainer = styled.div`
  */
 export const TagFilterWrapper = styled.div`
   width: 100%;
+  max-width: 1600px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 12px;
+  margin: -1rem auto 1.25rem;
   padding: 12px 16px;
   background-color: ${(props) => props.theme.colors.surface};
   border-radius: 12px;
