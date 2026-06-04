@@ -55,19 +55,24 @@ export const NoteCard = styled.article`
   padding: 1.5rem;
   padding-top: 2.25rem;
   border-radius: 18px;
-  background: ${({ $surfaceBg, theme }) => $surfaceBg || theme.colors.cardBg};
+  --glow-x: 50%;
+  --glow-y: 28%;
+  --glow-opacity: 0;
+  background: ${({ $surfaceBg, theme }) =>
+    `radial-gradient(circle at var(--glow-x) var(--glow-y), rgba(129, 182, 255, var(--glow-opacity)) 0%, transparent 33%), ${$surfaceBg || theme.colors.cardBg}`};
   border: 1px solid ${({ $surfaceBorder, theme }) =>
     $surfaceBorder || theme.colors.cardBorder};
   box-shadow: ${({ theme }) => theme.colors.cardShadow};
   font-family: "Barlow", sans-serif;
   touch-action: auto;
   cursor: default;
+  will-change: transform, box-shadow, background-position;
   transition:
     transform 0.35s cubic-bezier(0.34, 1.2, 0.64, 1),
     box-shadow 0.35s ease,
     min-height 0.45s cubic-bezier(0.65, 0, 0.35, 1),
     border-color 0.3s ease,
-    background-color 0.3s ease;
+    background 0.35s ease;
 
   ${({ $isDragging }) =>
     $isDragging &&

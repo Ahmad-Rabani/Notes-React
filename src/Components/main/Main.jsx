@@ -8,6 +8,7 @@ import Create from "../card/CreateCard";
 import ShowCard from "../Show Card/Card";
 import SortableNotesList from "../Show Card/SortableNotesList";
 import SkeletonLoader from "../loader/SkeletonLoader";
+import { NoteCompass, readSeenToday } from "./NoteCompass";
 import NoteSearchBar from "./NoteSearchBar";
 import TagFilterBar from "../tags/TagFilterSidebar";
 import useDebouncedValue from "./useDebouncedValue";
@@ -15,6 +16,8 @@ import { filterNotes } from "../utils/noteSearch";
 import { filterNotesByTags } from "../utils/tagUtils";
 import {
   CardsGrid,
+  CompassButton,
+  CompassPulse,
   DndHint,
   EmptyState,
   FabButton,
@@ -41,6 +44,8 @@ const Main = () => {
   const [currentUserUid, setCurrentUserUid] = useState(null);
   const [enteringIds, setEnteringIds] = useState(new Set());
   const [searchQuery, setSearchQuery] = useState("");
+  const [compassOpen, setCompassOpen] = useState(false);
+  const [compassSeenToday, setCompassSeenToday] = useState(false);
 
   const searchInputRef = useRef(null);
   const debouncedSearch = useDebouncedValue(searchQuery, 200);
@@ -77,6 +82,7 @@ const Main = () => {
   useEffect(() => {
     if (currentUserUid) {
       dispatch(fetchNotes({ userUid: currentUserUid, isStared }));
+      setCompassSeenToday(readSeenToday(currentUserUid));
     }
   }, [currentUserUid, isStared, dispatch]);
 
@@ -137,6 +143,15 @@ const Main = () => {
   const handleLogout = () => {
     localStorage.removeItem("userLoggedIn");
     navigate("/login", { replace: true });
+  };
+
+  const openCompass = () => {
+    setCompassOpen(true);
+    setCompassSeenToday(true);
+  };
+
+  const closeCompass = () => {
+    setCompassOpen(false);
   };
 
   const isLoading = status === "loading" || status === "idle";
@@ -221,6 +236,14 @@ const Main = () => {
           >
             Starred
           </FilterButton>
+          <CompassButton
+            type="button"
+            onClick={openCompass}
+            aria-label="Open Quiet Compass"
+          >
+            <span className="material-symbols-outlined">explore</span>
+            {!compassSeenToday && <CompassPulse />}
+          </CompassButton>
           <LogoutButton type="button" onClick={handleLogout}>
             Logout
           </LogoutButton>
@@ -251,6 +274,14 @@ const Main = () => {
         {isCreateModal && (
           <Create key={`add-note-${modalKey}`} showModel={setModel} userUid={currentUserUid} />
         )}
+
+        <NoteCompass
+          notes={data}
+          userUid={currentUserUid}
+          isOpen={compassOpen}
+          onOpen={() => setCompassSeenToday(true)}
+          onClose={closeCompass}
+        />
 
         {showSkeleton ? <SkeletonLoader count={6} /> : renderNotes()}
 

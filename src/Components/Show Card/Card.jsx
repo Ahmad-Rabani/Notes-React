@@ -15,6 +15,7 @@ import {
   getCardSurfaceStyles,
 } from "../utils/cardColors";
 import { useTheme } from "../../theme/ThemeProvider";
+import usePointerLevitate from "../utils/usePointerLevitate";
 import {
   ActionButton,
   CardActions,
@@ -75,6 +76,13 @@ const ShowCard = ({
   const [savedPulse, setSavedPulse] = useState(false);
 
   const nameRef = useRef(null);
+  const {
+    cardRef,
+    cardStyle,
+    handlePointerMove,
+    handlePointerLeave,
+    handlePointerUp,
+  } = usePointerLevitate({ enabled: !isEditing && !isColorPickerOpen });
 
   // Extract tags from all notes for suggestions
   const tagSuggestions = useMemo(() => {
@@ -193,6 +201,8 @@ const ShowCard = ({
       onExitComplete={handleExitComplete}
     >
       <NoteCard
+        ref={cardRef}
+        style={cardStyle}
         $isEditing={isEditing}
         $savedPulse={savedPulse}
         $isDragging={isDragging}
@@ -201,6 +211,9 @@ const ShowCard = ({
         $surfaceBorder={surfaceStyles?.border}
         data-dragging={isDragging ? "true" : undefined}
         data-editing={isEditing ? "true" : undefined}
+        onPointerMove={handlePointerMove}
+        onPointerLeave={handlePointerLeave}
+        onPointerUp={handlePointerUp}
         aria-label={`Note: ${data.name}`}
       >
         {!isEditing && (

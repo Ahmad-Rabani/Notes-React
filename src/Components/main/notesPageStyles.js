@@ -11,6 +11,32 @@ const fadeIn = keyframes`
   }
 `;
 
+const driftAura = keyframes`
+  from {
+    transform: translateY(0) scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-6px) scale(1.08);
+    opacity: 0.65;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 0.4;
+  }
+`;
+
+const glowPulse = keyframes`
+  from {
+    transform: scale(0.9);
+    opacity: 0.4;
+  }
+  to {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+`;
+
 export const PageWrapper = styled.div`
   min-height: 100vh;
   padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 6rem;
@@ -58,6 +84,48 @@ export const FilterGroup = styled.div`
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
+`;
+
+export const CompassButton = styled.button`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: ${({ theme }) => theme.colors.surface};
+  color: ${({ theme }) => theme.colors.text};
+  box-shadow: ${({ theme }) => theme.colors.cardShadow};
+  cursor: pointer;
+  transition:
+    transform 0.25s ease,
+    background 0.3s ease,
+    box-shadow 0.3s ease,
+    color 0.3s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    background: ${({ theme }) => theme.colors.paleBlue};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.periwinkle};
+    outline-offset: 3px;
+  }
+`;
+
+export const CompassPulse = styled.span`
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: ${({ theme }) => theme.colors.periwinkle};
+  box-shadow: 0 0 0 0 rgba(125, 148, 255, 0.4);
+  animation: ${glowPulse} 1.8s ease infinite;
 `;
 
 export const FilterButton = styled.button`
@@ -205,6 +273,163 @@ export const DndHint = styled.p`
   color: ${({ theme }) => theme.colors.textMuted};
   text-align: center;
   animation: ${fadeIn} 0.5s ease 0.15s both;
+`;
+
+export const CompassOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: rgba(11, 20, 42, 0.62);
+  backdrop-filter: blur(12px);
+`;
+
+export const CompassPanel = styled.div`
+  position: relative;
+  width: min(700px, 100%);
+  padding: 2rem;
+  border-radius: 30px;
+  background: ${({ theme }) => theme.colors.pageGradient};
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 28px 90px rgba(4, 15, 48, 0.28);
+  overflow: hidden;
+  animation: ${fadeIn} 0.5s ease both;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 15% 20%, rgba(160, 200, 255, 0.14), transparent 18%),
+      radial-gradient(circle at 82% 30%, rgba(255, 215, 180, 0.12), transparent 18%),
+      radial-gradient(circle at 50% 85%, rgba(145, 223, 198, 0.08), transparent 14%);
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+`;
+
+export const CompassHeader = styled.div`
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+`;
+
+export const CompassTitle = styled.h2`
+  margin: 0;
+  font-size: clamp(1.6rem, 2vw, 2rem);
+  color: ${({ theme }) => theme.colors.text};
+`;
+
+export const CompassTone = styled.p`
+  margin: 0.5rem 0 0;
+  color: ${({ theme }) => theme.colors.textMuted};
+  line-height: 1.6;
+  max-width: 45rem;
+`;
+
+export const CompassCard = styled.div`
+  position: relative;
+  z-index: 1;
+  padding: 1.75rem;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 18px 42px rgba(3, 12, 35, 0.16);
+  backdrop-filter: blur(16px);
+  overflow: hidden;
+  margin: 1.5rem 0;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+`;
+
+export const CompassNoteTitle = styled.h3`
+  margin: 0 0 0.75rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.text};
+`;
+
+export const CompassExcerpt = styled.p`
+  margin: 0;
+  color: ${({ theme }) => theme.colors.textMuted};
+  line-height: 1.8;
+  font-size: 1rem;
+`;
+
+export const CompassFooter = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+`;
+
+export const CompassLabel = styled.span`
+  color: ${({ theme }) => theme.colors.textMuted};
+  font-size: 0.92rem;
+`;
+
+export const CompassActionGroup = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+`;
+
+export const CompassAction = styled.button`
+  padding: 0.8rem 1.2rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: inherit;
+  transition: transform 0.2s ease, background 0.25s ease, color 0.25s ease;
+
+  ${({ $primary, theme }) =>
+    $primary
+      ? `background: ${theme.colors.periwinkle}; color: #fff;`
+      : `background: rgba(255, 255, 255, 0.12); color: ${theme.colors.text}; border: 1px solid rgba(255,255,255,0.18);`}
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.primary};
+    outline-offset: 3px;
+  }
+`;
+
+export const CompassClose = styled.button`
+  border: none;
+  background: transparent;
+  color: ${({ theme }) => theme.colors.textMuted};
+  font-size: 1.1rem;
+  cursor: pointer;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.text};
+  }
+`;
+
+export const NoNotesMessage = styled.div`
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  color: ${({ theme }) => theme.colors.textMuted};
+  line-height: 1.8;
 `;
 
 export const SearchBarWrapper = styled.div`
