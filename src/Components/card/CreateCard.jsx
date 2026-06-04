@@ -1,6 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { saveNote } from "./_redux/CardSlice";
+import TagInput from "../tags/TagInput";
+import { extractUniqueTags } from "../utils/tagUtils";
 import {
   FieldGroup,
   FieldInput,
@@ -19,16 +21,23 @@ import {
   WordCount,
 } from "./createCardStyles";
 
-const EMPTY_FORM = { name: "", description: "", date: "" };
+const EMPTY_FORM = { name: "", description: "", date: "", tags: [] };
 
 const CreateCard = ({ updatingData, showModel, userUid }) => {
   const refouterDiv = useRef();
   const dispatch = useDispatch();
   const { status } = useSelector((state) => state.model);
+  const { data: allNotes } = useSelector((state) => state.main);
   const isEdit = Boolean(updatingData);
 
   const [form, setForm] = useState(EMPTY_FORM);
   const [words, setWords] = useState(0);
+
+  // Extract tags from all notes for suggestions
+  const tagSuggestions = useMemo(() => {
+    const tagMap = extractUniqueTags(allNotes);
+    return Object.keys(tagMap).sort();
+  }, [allNotes]);
 
   useEffect(() => {
     if (isEdit) {
@@ -36,6 +45,7 @@ const CreateCard = ({ updatingData, showModel, userUid }) => {
         name: updatingData.name ?? "",
         description: updatingData.description ?? "",
         date: updatingData.date ?? "",
+        tags: updatingData.tags ?? [],
       });
       const wordList = (updatingData.description ?? "").trim().split(/\s+/);
       setWords(wordList.filter(Boolean).length);
@@ -70,6 +80,10 @@ const CreateCard = ({ updatingData, showModel, userUid }) => {
     }
   };
 
+  const handleTagsChange = (newTags) => {
+    setForm((prev) => ({ ...prev, tags: newTags }));
+  };
+
   function handleSubmit(e) {
     e.preventDefault();
 
@@ -77,6 +91,7 @@ const CreateCard = ({ updatingData, showModel, userUid }) => {
       name: form.name.trim(),
       description: form.description.trim(),
       date: form.date,
+      tags: form.tags,
     };
 
     dispatch(saveNote({ updatingData, userUid, noteData })).then(() => {
@@ -156,6 +171,14 @@ const CreateCard = ({ updatingData, showModel, userUid }) => {
                 value={form.date}
                 onChange={handleChange("date")}
                 required
+              />
+            </FieldGroup>
+
+            <FieldGroup>
+              <TagInput
+                tags={form.tags}
+                onChange={handleTagsChange}
+                suggestions={tagSuggestions}
               />
             </FieldGroup>
 

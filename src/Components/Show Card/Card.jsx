@@ -7,6 +7,9 @@ import { SmLoader } from "../loader/Loading";
 import AnimatedCard from "./AnimatedCard";
 import HighlightText from "../utils/HighlightText";
 import CardColorPicker from "./CardColorPicker";
+import TagBadge from "../tags/TagBadge";
+import TagInput from "../tags/TagInput";
+import { extractUniqueTags } from "../utils/tagUtils";
 import {
   DEFAULT_CARD_COLOR,
   getCardSurfaceStyles,
@@ -52,12 +55,14 @@ const ShowCard = ({
   const dispatch = useDispatch();
   const { isDark } = useTheme();
   const { status: saveStatus } = useSelector((state) => state.model);
+  const { data: allNotes } = useSelector((state) => state.main);
 
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
     name: data.name,
     description: data.description,
     date: data.date,
+    tags: data.tags || [],
   });
   const [editWords, setEditWords] = useState(0);
   const [isStarLoading, setStarLoading] = useState(false);
@@ -69,6 +74,12 @@ const ShowCard = ({
   const [savedPulse, setSavedPulse] = useState(false);
 
   const nameRef = useRef(null);
+
+  // Extract tags from all notes for suggestions
+  const tagSuggestions = useMemo(() => {
+    const tagMap = extractUniqueTags(allNotes);
+    return Object.keys(tagMap).sort();
+  }, [allNotes]);
 
   const cardColorId = data.cardColor || DEFAULT_CARD_COLOR;
   const surfaceStyles = useMemo(
@@ -129,6 +140,7 @@ const ShowCard = ({
       name: data.name ?? "",
       description,
       date: data.date ?? "",
+      tags: data.tags ?? [],
     });
     const wordList = description.trim().split(/\s+/);
     setEditWords(wordList.filter(Boolean).length);
@@ -149,6 +161,10 @@ const ShowCard = ({
     }
   };
 
+  const handleTagsChange = (newTags) => {
+    setEditForm((prev) => ({ ...prev, tags: newTags }));
+  };
+
   const handleEditSubmit = (e) => {
     e.preventDefault();
 
@@ -156,6 +172,7 @@ const ShowCard = ({
       name: editForm.name.trim(),
       description: editForm.description.trim(),
       date: editForm.date,
+      tags: editForm.tags,
     };
 
     dispatch(saveNote({ updatingData: data, userUid, noteData })).then(() => {
@@ -223,6 +240,15 @@ const ShowCard = ({
             <CardDate dateTime={data.date}>
               <HighlightText text={data.date} query={searchQuery} />
             </CardDate>
+
+            {/* Display tags if present */}
+            {data.tags && data.tags.length > 0 && (
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "12px" }}>
+                {data.tags.map((tag) => (
+                  <TagBadge key={tag} tag={tag} />
+                ))}
+              </div>
+            )}
 
             <CardActions className="card-actions">
               <CardColorPicker
@@ -313,6 +339,14 @@ const ShowCard = ({
                 value={editForm.date}
                 onChange={handleEditChange("date")}
                 required
+              />
+            </EditFieldGroup>
+
+            <EditFieldGroup>
+              <TagInput
+                tags={editForm.tags}
+                onChange={handleTagsChange}
+                suggestions={tagSuggestions}
               />
             </EditFieldGroup>
 

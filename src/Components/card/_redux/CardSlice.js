@@ -26,6 +26,7 @@ export const saveNote = createAsyncThunk(
         name: noteData.name,
         description: noteData.description,
         date: noteData.date,
+        tags: noteData.tags || [],
         stared: updatingData ? updatingData.stared : false,
         order,
         cardColor: updatingData?.cardColor ?? DEFAULT_CARD_COLOR,
