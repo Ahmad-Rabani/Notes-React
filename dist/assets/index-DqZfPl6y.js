@@ -530,7 +530,7 @@ Error generating stack: `+e.message+`
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: 260px;
+  height: 300px;
   padding: 1.5rem;
   padding-top: 2.25rem;
   border-radius: 18px;
@@ -547,7 +547,7 @@ Error generating stack: `+e.message+`
   transition:
     transform 0.35s cubic-bezier(0.34, 1.2, 0.64, 1),
     box-shadow 0.35s ease,
-    min-height 0.45s cubic-bezier(0.65, 0, 0.35, 1),
+    height 0.45s cubic-bezier(0.65, 0, 0.35, 1),
     border-color 0.3s ease,
     background 0.35s ease;
 
@@ -557,7 +557,8 @@ Error generating stack: `+e.message+`
     `}
 
   ${({$isEditing:e,theme:t})=>e&&RS`
-      min-height: 420px;
+      height: auto;
+      min-height: 440px;
       border-color: ${t.colors.primary};
       box-shadow:
         0 12px 32px rgba(17, 45, 78, 0.12),
@@ -678,12 +679,12 @@ Error generating stack: `+e.message+`
   word-break: break-word;
 `,XC=Z.p`
   flex: 1;
-  margin: 0 0 1rem;
+  min-height: 0;
+  margin: 0 0 0.75rem;
   font-size: 0.95rem;
   line-height: 1.55;
   color: ${({theme:e})=>e.colors.textMuted};
   overflow-y: auto;
-  max-height: 120px;
   padding-right: 0.25rem;
   word-break: break-word;
 
@@ -694,6 +695,10 @@ Error generating stack: `+e.message+`
   &::-webkit-scrollbar-thumb {
     background: ${({theme:e})=>e.colors.periwinkle};
     border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
   }
 `,ZC=Z.time`
   display: block;
@@ -970,6 +975,8 @@ Error generating stack: `+e.message+`
   display: flex;
   flex-direction: column;
   flex: 1;
+  min-height: 0;
+  overflow: hidden;
   transition: opacity 0.3s ease, transform 0.3s ease;
 
   ${({$hidden:e})=>e&&RS`
