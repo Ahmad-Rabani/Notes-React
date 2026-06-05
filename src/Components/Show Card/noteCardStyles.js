@@ -51,7 +51,8 @@ export const NoteCard = styled.article`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 300px;
+  height: ${({ $hasImage }) => ($hasImage ? "auto" : "300px")};
+  min-height: ${({ $hasImage }) => ($hasImage ? "360px" : "unset")};
   padding: 1.5rem;
   padding-top: 2.25rem;
   border-radius: 18px;

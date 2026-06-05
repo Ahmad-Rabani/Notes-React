@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { doc, getDoc, setDoc, deleteDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../../firebase";
+import { deleteImage } from "../../../services/imageService";
 
 export const fetchNotes = createAsyncThunk("notes/fetchNotes", async ({ userUid, isStared }, { rejectWithValue }) => {
   try {
@@ -17,10 +18,15 @@ export const fetchNotes = createAsyncThunk("notes/fetchNotes", async ({ userUid,
   }
 });
 
-export const deleteNote = createAsyncThunk("notes/deleteNote", async ({ noteId, userUid }, { dispatch }) => {
-  await deleteDoc(doc(db, "newData", noteId));
-  dispatch(fetchNotes({ userUid, isStared: false }));
-});
+export const deleteNote = createAsyncThunk(
+  "notes/deleteNote",
+  async ({ noteId, userUid, imagePath }, { dispatch }) => {
+    await deleteDoc(doc(db, "newData", noteId));
+    // Clean up associated image from Firebase Storage (if any)
+    if (imagePath) await deleteImage(imagePath);
+    dispatch(fetchNotes({ userUid, isStared: false }));
+  }
+);
 
 export const toggleStar = createAsyncThunk("notes/toggleStar", async ({ noteId, userUid }, { dispatch }) => {
   const docRef = doc(db, "newData", noteId);

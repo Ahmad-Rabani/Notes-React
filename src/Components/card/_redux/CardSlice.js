@@ -18,6 +18,12 @@ export const saveNote = createAsyncThunk(
     );
     const order = updatingData?.order ?? maxOrder + 1;
 
+    // Build the document — image fields are only included when explicitly provided
+    // so that a save without image changes never clobbers the stored URL/path.
+    const imageFields = {};
+    if ("imageURL" in noteData) imageFields.imageURL = noteData.imageURL ?? null;
+    if ("imagePath" in noteData) imageFields.imagePath = noteData.imagePath ?? null;
+
     await setDoc(
       noteRef,
       {
@@ -30,6 +36,7 @@ export const saveNote = createAsyncThunk(
         stared: updatingData ? updatingData.stared : false,
         order,
         cardColor: updatingData?.cardColor ?? DEFAULT_CARD_COLOR,
+        ...imageFields,
       },
       { merge: true }
     );

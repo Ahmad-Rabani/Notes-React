@@ -1,0 +1,19 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Firebase Storage Security Rules for Notes-React
+//
+// Paste these into Firebase Console → Storage → Rules
+// (or deploy via: firebase deploy --only storage)
+// ─────────────────────────────────────────────────────────────────────────────
+
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Users may only read/write their own note images.
+    // Path structure: users/{userId}/notes/{imageId}/image
+    match /users/{userId}/notes/{allPaths=**} {
+      allow read, write: if request.auth != null
+                         && request.auth.uid == userId;
+    }
+  }
+}
